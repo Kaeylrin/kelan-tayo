@@ -70,7 +70,7 @@ export function LandingView({
             <input
               className="field"
               id="creatorNameInput"
-              placeholder="e.g. Mika, Josh, Bea"
+              placeholder="e.g. Juan Dela Cruz"
               type="text"
               value={creatorName}
               onChange={(e) => setCreatorName(e.target.value)}
