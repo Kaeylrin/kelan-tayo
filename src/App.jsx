@@ -9,7 +9,7 @@ import { Footer } from './components/Footer.jsx';
 import { LAST_ROOM_KEY, LAST_USER_KEY } from './constants/config.js';
 import { formatDateISO, getDatesArray } from './utils/storage.js';
 
-import { createRoom, getRoomByCode, updateRoomCreator } from './services/roomService.js';
+import { createRoom, getRoomByCode, updateRoomCreator, confirmRoom, unlockRoom } from './services/roomService.js';
 import { joinRoom } from './services/memberService.js';
 import { saveAvailability, getRoomAvailability } from './services/availabilityService.js';
 
@@ -163,8 +163,8 @@ export default function App() {
       showToast(`Plan created! Room code: ${updatedRoom.room_code}`);
       setActiveTab('mark');
     } catch (err) {
-      console.error(err);
-      showToast('Error creating plan.');
+      console.error('Supabase Error:', err);
+      showToast(`Error: ${err.message || 'Check console for details'}`);
     } finally {
       setIsLoading(false);
     }
@@ -314,7 +314,6 @@ export default function App() {
                 // To be handled inside Dashboard or here
                 setIsLoading(true);
                 try {
-                  const { unlockRoom } = await import('./services/roomService.js');
                   const updated = await unlockRoom(currentRoom.id, currentUser.id);
                   setCurrentRoom(updated);
                   showToast('Room unlocked!');
@@ -333,7 +332,6 @@ export default function App() {
           onConfirm={async () => {
             setIsLoading(true);
             try {
-              const { confirmRoom } = await import('./services/roomService.js');
               const { date, startH, endH } = confirmModalData;
               const updated = await confirmRoom(currentRoom.id, currentUser.id, date, startH, endH);
               setCurrentRoom(updated);

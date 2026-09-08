@@ -211,6 +211,28 @@ main {
   }
 }
 
+/* ---------- Loading Overlay ---------- */
+.loading-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 20, 50, 0.7);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  color: var(--gold);
+  font-family: 'Baloo 2', sans-serif;
+  font-size: 24px;
+  font-weight: 800;
+  animation: pulseLoading 1.5s infinite ease-in-out;
+}
+
+@keyframes pulseLoading {
+  0%, 100% { opacity: 0.6; transform: scale(0.98); }
+  50% { opacity: 1; transform: scale(1.02); }
+}
+
 /* ---------- Landing / Create View (Non-Scrollable Single Screen) ---------- */
 .landing-grid-layout {
   display: grid;
