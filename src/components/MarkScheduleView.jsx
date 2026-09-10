@@ -123,7 +123,7 @@ export function MarkScheduleView({
             <input
               className="field name-input-field"
               id="nameInput"
-              placeholder="e.g. Mika, Josh, Bea"
+              placeholder="e.g. Juan Dela Cruz"
               type="text"
               value={userName}
               onChange={(e) => setUserName(e.target.value)}
