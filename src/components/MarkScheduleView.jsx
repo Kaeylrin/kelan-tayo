@@ -15,6 +15,7 @@ export function MarkScheduleView({
   const dates = useMemo(() => getDatesArray(room.startDate, room.endDate), [room.startDate, room.endDate]);
   const [isMouseDown, setIsMouseDown] = useState(false);
   const [dragMarkMode, setDragMarkMode] = useState(true); // true = mark busy, false = mark free
+  const [interactionMode, setInteractionMode] = useState('scroll'); // 'scroll' or 'draw'
   const scrollRef = useRef(null);
 
   // Auto-scroll to 8:00 AM on initial load
@@ -38,6 +39,7 @@ export function MarkScheduleView({
   };
 
   const handleCellMouseDown = (slotKey) => {
+    if (interactionMode === 'scroll') return;
     setIsMouseDown(true);
     const currentlyBusy = busySlots.has(slotKey);
     const newMode = !currentlyBusy;
@@ -46,12 +48,13 @@ export function MarkScheduleView({
   };
 
   const handleCellMouseEnter = (slotKey) => {
-    if (!isMouseDown) return;
+    if (!isMouseDown || interactionMode === 'scroll') return;
     toggleSlot(slotKey, dragMarkMode);
   };
 
   // Touch Drag Support for Mobile Viewports
   const handleTouchMove = (e) => {
+    if (interactionMode === 'scroll') return;
     if (!isMouseDown) return;
     const touch = e.touches[0];
     const target = document.elementFromPoint(touch.clientX, touch.clientY);
@@ -132,30 +135,50 @@ export function MarkScheduleView({
               disabled={isLocked}
             />
           </div>
-          <div className="preset-quick-actions">
-            <button
-              className="btn-quick-toggle"
-              type="button"
-              onClick={() => setBusySlots(new Set())}
-              disabled={isLocked}
-            >
-              Clear (All free)
-            </button>
-            <button
-              className="btn-quick-toggle"
-              type="button"
-              disabled={isLocked}
-              onClick={() => {
-                const all = new Set();
-                dates.forEach(d => {
-                  const ds = formatDateISO(d);
-                  for (let h = 0; h < 24; h++) all.add(`${ds}_${h}`);
-                });
-                setBusySlots(all);
-              }}
-            >
-              Mark all busy
-            </button>
+          <div className="preset-quick-actions" style={{ flexDirection: 'column', gap: '8px', alignItems: 'flex-start' }}>
+            <div style={{ display: 'flex', gap: '4px', background: 'var(--navy)', padding: '4px', borderRadius: '8px' }}>
+              <button
+                className={`btn-quick-toggle ${interactionMode === 'scroll' ? 'active' : ''}`}
+                style={interactionMode === 'scroll' ? { background: 'var(--blue)', color: '#fff' } : {}}
+                onClick={() => setInteractionMode('scroll')}
+                type="button"
+              >
+                👆 Scroll
+              </button>
+              <button
+                className={`btn-quick-toggle ${interactionMode === 'draw' ? 'active' : ''}`}
+                style={interactionMode === 'draw' ? { background: 'var(--blue)', color: '#fff' } : {}}
+                onClick={() => setInteractionMode('draw')}
+                type="button"
+              >
+                🖍️ Draw
+              </button>
+            </div>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <button
+                className="btn-quick-toggle"
+                type="button"
+                onClick={() => setBusySlots(new Set())}
+                disabled={isLocked}
+              >
+                Clear (All free)
+              </button>
+              <button
+                className="btn-quick-toggle"
+                type="button"
+                disabled={isLocked}
+                onClick={() => {
+                  const all = new Set();
+                  dates.forEach(d => {
+                    const ds = formatDateISO(d);
+                    for (let h = 0; h < 24; h++) all.add(`${ds}_${h}`);
+                  });
+                  setBusySlots(all);
+                }}
+              >
+                Mark all busy
+              </button>
+            </div>
           </div>
         </div>
 
@@ -178,7 +201,7 @@ export function MarkScheduleView({
       <div className="grid-wrap">
         <div className="grid-scroll" ref={scrollRef}>
           <div
-            className="avail-grid"
+            className={`avail-grid ${interactionMode}-mode`}
             style={{ gridTemplateColumns: `60px repeat(${dates.length}, minmax(80px, 1fr))` }}
             onTouchMove={handleTouchMove}
           >
@@ -210,6 +233,7 @@ export function MarkScheduleView({
                       }}
                       onMouseEnter={() => handleCellMouseEnter(slotKey)}
                       onTouchStart={() => {
+                        if (interactionMode === 'scroll') return;
                         setIsMouseDown(true);
                         const newMode = !busySlots.has(slotKey);
                         setDragMarkMode(newMode);
