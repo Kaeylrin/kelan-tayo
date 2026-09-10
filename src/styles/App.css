@@ -828,14 +828,7 @@ input[type="date"].field {
   min-width: 580px;
   user-select: none;
   -webkit-user-select: none;
-}
-
-.avail-grid.draw-mode {
   touch-action: none;
-}
-
-.avail-grid.scroll-mode {
-  touch-action: auto;
 }
 
 .day-head {
