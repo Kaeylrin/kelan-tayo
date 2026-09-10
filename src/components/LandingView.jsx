@@ -23,8 +23,11 @@ export function LandingView({
 }) {
   const datesText = useMemo(() => {
     if (!currentRoom) return '';
-    const s = new Date(currentRoom.startDate + 'T00:00:00');
-    const e = new Date(currentRoom.endDate + 'T00:00:00');
+    const startStr = currentRoom.startDate || currentRoom.date_from;
+    const endStr = currentRoom.endDate || currentRoom.date_to;
+    if (!startStr || !endStr) return '';
+    const s = new Date(startStr + 'T00:00:00');
+    const e = new Date(endStr + 'T00:00:00');
     return `${formatPrettyDate(s)} – ${formatPrettyDate(e)}`;
   }, [currentRoom]);
 

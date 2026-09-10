@@ -255,7 +255,12 @@ export default function App() {
       />
       {toastMessage && <div className="toast">{toastMessage}</div>}
       
-      {isLoading && <div className="loading-overlay">Loading...</div>}
+      {isLoading && (
+        <div className="loading-overlay">
+          <div className="loading-spinner"></div>
+          <span className="loading-text">Loading...</span>
+        </div>
+      )}
 
       <main>
         {activeTab === 'landing' && (

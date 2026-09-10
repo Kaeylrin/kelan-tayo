@@ -81,7 +81,12 @@ export function DashboardView({ room, currentUser, onRefresh, onLockInDate, onUn
   };
 
   if (isLoading) {
-    return <div className="view-content" style={{ padding: '40px', textAlign: 'center' }}>Loading live data...</div>;
+    return (
+      <div className="view-content" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '60vh', gap: '16px' }}>
+        <div className="loading-spinner"></div>
+        <div className="loading-text" style={{ fontSize: '18px' }}>Loading live data...</div>
+      </div>
+    );
   }
 
   return (

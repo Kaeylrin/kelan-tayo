@@ -209,7 +209,11 @@ export function MarkScheduleView({
                         handleCellMouseDown(slotKey);
                       }}
                       onMouseEnter={() => handleCellMouseEnter(slotKey)}
-                      onTouchStart={() => {
+                      onTouchStart={(e) => {
+                        // Don't e.preventDefault() here because it might block scrolling if we ever revert, 
+                        // but wait, we have touch-action: none on the cell, so it doesn't matter.
+                        // Actually, to prevent simulated mouse down double-toggling:
+                        e.preventDefault();
                         setIsMouseDown(true);
                         const newMode = !busySlots.has(slotKey);
                         setDragMarkMode(newMode);
