@@ -53,7 +53,7 @@ export function LandingView({
             </div>
             <h2 className="display room-card-title">{currentRoom.name}</h2>
             <div className="room-card-meta">
-              <span>Room Code: <strong>{currentRoom.code}</strong></span>
+              <span>Room Code: <strong>{currentRoom.room_code || currentRoom.code}</strong></span>
               <span>Dates: {datesText}</span>
               <span>{responseCount} member{responseCount === 1 ? '' : 's'} submitted schedule</span>
             </div>
