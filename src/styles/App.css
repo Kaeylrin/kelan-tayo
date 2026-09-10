@@ -573,6 +573,15 @@ input[type="date"].field {
   color: var(--gold);
 }
 
+.cell {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+  touch-action: none;
+}
+
 .progress-pill {
   background: rgba(111, 224, 184, 0.14);
   border: 1px solid rgba(111, 224, 184, 0.35);
@@ -828,7 +837,6 @@ input[type="date"].field {
   min-width: 580px;
   user-select: none;
   -webkit-user-select: none;
-  touch-action: none;
 }
 
 .day-head {
@@ -1459,3 +1467,6 @@ footer {
     width: 100%;
   }
 }
+
+
+.avail-grid .cell { touch-action: none; }
