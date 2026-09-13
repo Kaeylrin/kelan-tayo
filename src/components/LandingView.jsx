@@ -36,7 +36,7 @@ export function LandingView({
   return (
     <div className="view-content landing-grid-layout">
       <div className="hero">
-        <span className="eyebrow">para hindi na tayo mag-draw</span>
+        <span className="eyebrow">para hindi na tayo mag drawing</span>
         <h1 className="display">Find the day everyone's actually free.</h1>
         <p>
           Stop guessing across endless group chat messages. Mark when you have classes, shifts, or plans — Kelan Tayo finds the dates where nobody is busy.
