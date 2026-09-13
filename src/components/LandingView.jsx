@@ -31,7 +31,7 @@ export function LandingView({
     return `${formatPrettyDate(s)} – ${formatPrettyDate(e)}`;
   }, [currentRoom]);
 
-  const responseCount = currentRoom ? Object.keys(currentRoom.participants || {}).length : 0;
+  const responseCount = currentRoom ? currentRoom.participantCount || 0 : 0;
 
   return (
     <div className="view-content landing-grid-layout">

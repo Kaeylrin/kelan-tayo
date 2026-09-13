@@ -10,8 +10,9 @@ import { LAST_ROOM_KEY, LAST_USER_KEY } from './constants/config.js';
 import { formatDateISO, getDatesArray } from './utils/storage.js';
 
 import { createRoom, getRoomByCode, updateRoomCreator, confirmRoom, unlockRoom } from './services/roomService.js';
-import { joinRoom } from './services/memberService.js';
+import { joinRoom, deleteMember, listMembers } from './services/memberService.js';
 import { saveAvailability, getRoomAvailability } from './services/availabilityService.js';
+import { supabase } from './utils/supabaseClient';
 
 import './styles/App.css';
 
@@ -85,28 +86,62 @@ export default function App() {
     init();
   }, []);
 
+  useEffect(() => {
+    if (!currentRoom?.id) return;
+    
+    const channel = supabase
+      .channel(`room-${currentRoom.id}`)
+      .on('postgres_changes', {
+        event: 'UPDATE',
+        schema: 'public',
+        table: 'rooms',
+        filter: `id=eq.${currentRoom.id}`
+      }, (payload) => {
+        // Only update status and confirmed details to lock it in realtime
+        setCurrentRoom(prev => prev ? { 
+            ...prev, 
+            status: payload.new.status,
+            confirmed_date: payload.new.confirmed_date,
+            confirmed_start: payload.new.confirmed_start,
+            confirmed_end: payload.new.confirmed_end
+        } : null);
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [currentRoom?.id]);
+
   const loadRoomData = async (code) => {
     setIsLoading(true);
     try {
       const room = await getRoomByCode(code);
       if (room) {
-        setCurrentRoom(room);
+        const members = await listMembers(room.id);
+        const participantCount = members.length;
+        setCurrentRoom({ ...room, participantCount });
         localStorage.setItem(LAST_ROOM_KEY, room.room_code);
         
         // Restore user session for this room if exists
         const memberId = getDeviceMemberId(room.id);
         if (memberId) {
-          // We could fetch member details here, but for now we rely on the device memory
-          setCurrentUser({ id: memberId, display_name: userName });
+          const myMember = members.find(m => m.id === memberId);
+          if (myMember) setCurrentUser({ id: memberId, display_name: myMember.display_name || userName });
           
           // Also fetch their current busy slots
           const availData = await getRoomAvailability(room.id);
-          const myAvail = availData.find(a => a.members?.id === memberId);
-          if (myAvail && myAvail.busy_hours) {
-            setBusySlots(new Set(myAvail.busy_hours));
-          } else {
-             setBusySlots(new Set());
-          }
+          const myAvailRows = availData.filter(a => a.members?.id === memberId);
+          
+          const newSet = new Set();
+          myAvailRows.forEach(row => {
+             if (row.busy_hours) {
+                 row.busy_hours.forEach(hr => {
+                     newSet.add(`${row.date}_${hr}`);
+                 });
+             }
+          });
+          setBusySlots(newSet);
         }
         
         setActiveTab('mark');
@@ -178,12 +213,23 @@ export default function App() {
     await loadRoomData(code);
   };
 
-  const handleLeaveRoom = () => {
-    setCurrentRoom(null);
-    setCurrentUser(null);
-    localStorage.removeItem(LAST_ROOM_KEY);
-    setBusySlots(new Set());
-    showToast('Switched away from active plan.');
+  const handleLeaveRoom = async () => {
+    setIsLoading(true);
+    try {
+      if (currentRoom && currentUser) {
+        await deleteMember(currentRoom.id, currentUser.id);
+      }
+      setCurrentRoom(null);
+      setCurrentUser(null);
+      localStorage.removeItem(LAST_ROOM_KEY);
+      setBusySlots(new Set());
+      showToast('Left the plan.');
+    } catch (e) {
+      console.error(e);
+      showToast('Failed to leave plan properly.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleSaveSchedule = async () => {

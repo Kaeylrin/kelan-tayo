@@ -37,3 +37,13 @@ export async function listMembers(roomId) {
   if (error) throw error;
   return data;
 }
+
+export async function deleteMember(roomId, memberId) {
+  const { error } = await supabase
+    .from('members')
+    .delete()
+    .eq('room_id', roomId)
+    .eq('id', memberId);
+
+  if (error) throw error;
+}
