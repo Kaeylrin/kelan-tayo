@@ -7,7 +7,7 @@ export function Footer({ onOpenLegal }) {
         <div className="footer-links">
           <button type="button" onClick={() => onOpenLegal('privacy')}>Privacy</button>
           <button type="button" onClick={() => onOpenLegal('terms')}>Terms</button>
-          <span className="footer-version">v1.0.0</span>
+          <span className="footer-version">v1.0.12</span>
         </div>
         <div className="footer-copy">
           Created by Wrenier
