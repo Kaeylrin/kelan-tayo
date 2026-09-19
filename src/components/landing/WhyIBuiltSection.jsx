@@ -1,9 +1,5 @@
 import React from 'react';
 
-/**
- * WhyIBuiltSection — personal story card with gold left-border accent,
- * decorative oversized quotation mark, sign-off, and sticky stat card.
- */
 export function WhyIBuiltSection() {
   return (
     <section className="story-section">
@@ -13,23 +9,22 @@ export function WhyIBuiltSection() {
       </div>
 
       <div className="story-layout">
-        {/* ── Story card ── */}
         <div className="story-card">
-          {/* Large decorative quote mark (opacity 0.22) */}
           <svg
             className="story-quote-mark"
-            viewBox="0 0 64 64"
+            viewBox="0 0 24 24"
             fill="currentColor"
             xmlns="http://www.w3.org/2000/svg"
             aria-hidden="true"
           >
-            <path d="M0 40.5V64h23.5V40.5H7.833C7.833 29.833 14.167 20.5 26.833 12.833L20.5 0C7.167 7.667 0 22.167 0 40.5ZM37.5 40.5V64H61V40.5H45.333C45.333 29.833 51.667 20.5 64.333 12.833L58 0C44.667 7.667 37.5 22.167 37.5 40.5Z" />
+            <path d="M7.17 6.17C4.87 8.47 3.5 11.1 3.5 14.13c0 3.1 2.02 5.37 4.63 5.37 2.2 0 3.87-1.73 3.87-3.87 0-2.03-1.4-3.6-3.3-3.6-.3 0-.57.03-.8.1.27-1.8 1.63-3.53 3.4-4.83L9 5.5c-.63.2-1.23.43-1.83.67zm10 0C14.87 8.47 13.5 11.1 13.5 14.13c0 3.1 2.02 5.37 4.63 5.37 2.2 0 3.87-1.73 3.87-3.87 0-2.03-1.4-3.6-3.3-3.6-.3 0-.57.03-.8.1.27-1.8 1.63-3.53 3.4-4.83L19 5.5c-.63.2-1.23.43-1.83.67z"/>
           </svg>
-
           <p>
             Since first year, ang dami naming sinasabing "kelan tayo lalabas,"
-            "gala tayo." Every group chat had the same pattern. Someone will
-            propose a date, three people are free, two aren't, someone says
+            "gala tayo." Every group chat had the same pattern.
+          </p>
+          <p>
+            Someone will propose a date, three people are free, two aren't, someone says
             "next time nalang," and next time never comes.
           </p>
           <p>
@@ -66,7 +61,6 @@ export function WhyIBuiltSection() {
           </div>
         </div>
 
-        {/* ── Sticky gold stat card ── */}
         <div className="story-stat">
           <div className="story-stat-number display">2</div>
           <div className="story-stat-label">

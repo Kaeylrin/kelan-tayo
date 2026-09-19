@@ -28,7 +28,7 @@ export function Navbar({ isLandingPage = false, isRoomPage = false, activeTab, s
   }, []);
 
   return (
-    <div className={`floating-nav-wrapper ${scrolled ? 'scrolled' : ''}`}>
+    <div className={`${isLandingPage ? 'landing-nav-wrapper' : 'floating-nav-wrapper'} ${scrolled ? 'scrolled' : ''}`}>
       <nav className="floating-navbar" aria-label="Main Navigation">
         {/* Logo — always links to / */}
         <div
