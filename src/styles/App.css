@@ -97,10 +97,10 @@ body {
 /* On scroll: shrink to a smaller centered floating pill */
 .floating-nav-wrapper.scrolled .floating-navbar {
   max-width: 720px;
-  padding: 9px 20px;
-  background: rgba(14, 32, 78, 0.96);
-  box-shadow: 0 12px 34px rgba(5, 10, 30, 0.48), 0 0 0 1.5px rgba(255, 198, 75, 0.28);
-  border-color: rgba(255, 198, 75, 0.28);
+  padding: 12px 20px;
+  background: rgba(20, 44, 104, 0.95);
+  box-shadow: 0 12px 30px rgba(8, 18, 46, 0.35);
+  border: 1px solid var(--cream-faint);
 }
 
 .floating-nav-wrapper.scrolled .logo {
@@ -1597,7 +1597,7 @@ footer {
 
 /* Nav spacer so content starts below fixed nav */
 .nav-spacer {
-  height: 84px;
+  height: 140px;
 }
 
 /* Landing logo (link variant — no underline) */
@@ -2073,3 +2073,4 @@ footer {
 .hero-ctas .btn-primary, .hero-ctas .btn-secondary {
   width: max-content;
 }
+
