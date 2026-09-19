@@ -1735,6 +1735,14 @@ footer {
 }
 
 .landing-main {
+  margin-top: 120px;
+  max-width: 1140px;
+  margin: 120px auto 0 auto;
+  padding: 0 40px;
+  flex: 1;
+}
+
+/* ---------- Landing Navbar ---------- */
 .landing-nav {
   position: fixed;
   top: 0;
@@ -2264,6 +2272,7 @@ footer {
 .hero-ctas .btn-primary, .hero-ctas .btn-secondary {
   width: max-content;
 }
+
 
 
 
