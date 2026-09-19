@@ -110,12 +110,14 @@ body {
 }
 
 .floating-nav-wrapper.scrolled .nav-cta {
+  margin-bottom: 4px;
   padding: 7px 16px;
   font-size: 13px;
 }
 
 /* "Create a plan" CTA button in the landing page nav */
 .nav-cta {
+  margin-bottom: 4px;
   background: var(--gold);
   color: var(--blue-deep);
   border: none;
@@ -1789,6 +1791,7 @@ footer {
 }
 
 .landing-nav.nav-scrolled .nav-cta {
+  margin-bottom: 4px;
   padding: 9px 18px;
   font-size: 13px;
 }
@@ -1816,6 +1819,7 @@ footer {
 
 /* Nav CTA pill */
 .nav-cta {
+  margin-bottom: 4px;
   background: var(--gold);
   color: var(--blue-deep);
   border: none;
@@ -2261,7 +2265,8 @@ footer {
 }
 
 .landing-nav-wrapper.scrolled .logo { font-size: 21px; }
-.landing-nav-wrapper.scrolled .nav-cta { padding: 9px 18px; font-size: 13px; }
+.landing-nav-wrapper.scrolled .nav-cta {
+  margin-bottom: 4px; padding: 9px 18px; font-size: 13px; }
 
 .landing-nav-wrapper.scrolled .floating-navbar {
   margin: 18px auto 0 auto !important;
@@ -2276,4 +2281,23 @@ footer {
 
 
 
+
+.hero-ctas a {
+  text-decoration: none !important;
+}
+.hero-ctas .btn-primary {
+  padding: 15px 26px !important;
+  font-size: 15px !important;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 0 #C9910F !important;
+}
+.hero-ctas .btn-secondary {
+  padding: 15px 26px !important;
+  font-size: 15px !important;
+  border-radius: 12px !important;
+}
+.floating-nav-wrapper.scrolled .nav-cta {
+  margin-bottom: 4px;
+  margin-bottom: 4px; /* offset the box shadow for visual symmetry */
+}
 
