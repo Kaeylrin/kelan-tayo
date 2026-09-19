@@ -1,7 +1,7 @@
 import { supabase } from '../utils/supabaseClient';
 import { generateRoomCode } from '../utils/storage';
 
-export async function createRoom(name, dateFrom, dateTo) {
+export async function createRoom(name, dateFrom, dateTo, preferredStart, preferredEnd) {
   const roomCode = generateRoomCode();
   
   const { data, error } = await supabase
@@ -11,6 +11,8 @@ export async function createRoom(name, dateFrom, dateTo) {
       name: name,
       date_from: dateFrom,
       date_to: dateTo,
+      preferred_start: preferredStart || null,
+      preferred_end: preferredEnd || null,
       status: 'open'
     }])
     .select()

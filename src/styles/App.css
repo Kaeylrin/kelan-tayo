@@ -67,10 +67,14 @@ body {
   z-index: 1000;
   display: flex;
   justify-content: center;
-  padding: 24px 24px;
+  padding: 16px 24px;
   pointer-events: none;
-  height: 100px; /* Comfortable height container to prevent page layout jumps */
   box-sizing: border-box;
+  transition: padding 0.35s ease;
+}
+
+.floating-nav-wrapper.scrolled {
+  padding: 12px 24px;
 }
 
 .floating-navbar {
@@ -87,14 +91,45 @@ body {
   border: 1px solid rgba(246, 241, 231, 0.18);
   border-radius: 100px;
   box-shadow: 0 10px 28px rgba(10, 20, 50, 0.32), 0 1px 0 rgba(255, 255, 255, 0.12) inset;
-  transition: background 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  transition: max-width 0.35s ease, padding 0.35s ease, background 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
 }
 
+/* On scroll: shrink to a smaller centered floating pill */
 .floating-nav-wrapper.scrolled .floating-navbar {
+  max-width: 720px;
+  padding: 9px 20px;
   background: rgba(14, 32, 78, 0.96);
   box-shadow: 0 12px 34px rgba(5, 10, 30, 0.48), 0 0 0 1.5px rgba(255, 198, 75, 0.28);
   border-color: rgba(255, 198, 75, 0.28);
 }
+
+.floating-nav-wrapper.scrolled .logo {
+  font-size: 21px;
+}
+
+.floating-nav-wrapper.scrolled .nav-cta {
+  padding: 7px 16px;
+  font-size: 13px;
+}
+
+/* "Create a plan" CTA button in the landing page nav */
+.nav-cta {
+  background: var(--gold);
+  color: var(--blue-deep);
+  border: none;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 800;
+  font-size: 14px;
+  padding: 10px 20px;
+  border-radius: 100px;
+  cursor: pointer;
+  text-decoration: none;
+  box-shadow: 0 4px 0 #C9910F;
+  transition: opacity 0.2s;
+  display: inline-block;
+}
+
+.nav-cta:hover { opacity: 0.88; }
 
 .logo {
   font-family: 'Baloo 2', sans-serif;
@@ -1488,3 +1523,491 @@ footer {
 
 
 .avail-grid .cell { touch-action: none; }
+
+/* ============================================================
+   MARKETING LANDING PAGE
+   All styles for: LandingNavbar, HeroSection, StatsSection,
+   HowItWorksSection, WhyIBuiltSection
+   ============================================================ */
+
+/* ---------- Landing page root wrapper ---------- */
+.landing-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.landing-main {
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 0 40px;
+  flex: 1;
+}
+
+/* ---------- Landing Navbar ---------- */
+.landing-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 22px 40px;
+  border-bottom: 1px solid var(--cream-faint);
+  background: transparent;
+  transition:
+    top 0.35s ease,
+    left 0.35s ease,
+    right 0.35s ease,
+    padding 0.35s ease,
+    border-radius 0.35s ease,
+    background 0.35s ease,
+    border-color 0.35s ease,
+    box-shadow 0.35s ease,
+    max-width 0.35s ease,
+    margin 0.35s ease;
+}
+
+.landing-nav.nav-scrolled {
+  top: 18px;
+  left: 50%;
+  right: auto;
+  transform: translateX(-50%);
+  max-width: 720px;
+  width: calc(100% - 48px);
+  padding: 12px 20px;
+  border-radius: 100px;
+  background: rgba(20, 44, 104, 0.82);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--cream-faint);
+  box-shadow: 0 12px 30px rgba(8, 18, 46, 0.35);
+}
+
+.landing-nav.nav-scrolled .landing-logo {
+  font-size: 21px;
+}
+
+.landing-nav.nav-scrolled .nav-cta {
+  padding: 9px 18px;
+  font-size: 13px;
+}
+
+/* Nav spacer so content starts below fixed nav */
+.nav-spacer {
+  height: 84px;
+}
+
+/* Landing logo (link variant — no underline) */
+.landing-logo {
+  font-family: 'Baloo 2', sans-serif;
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  transform: rotate(-2deg);
+  display: inline-block;
+  text-decoration: none;
+  color: var(--cream);
+}
+
+.landing-logo span {
+  color: var(--gold);
+}
+
+/* Nav CTA pill */
+.nav-cta {
+  background: var(--gold);
+  color: var(--blue-deep);
+  border: none;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 800;
+  font-size: 14px;
+  padding: 11px 22px;
+  border-radius: 100px;
+  cursor: pointer;
+  text-decoration: none;
+  box-shadow: 0 4px 0 #C9910F;
+  transition: background 0.15s ease, box-shadow 0.15s ease;
+}
+
+.nav-cta:hover {
+  background: var(--gold-hover);
+}
+
+/* ---------- Hero ---------- */
+.hero {
+  padding: 90px 0 70px;
+  max-width: 720px;
+}
+
+.eyebrow {
+  display: inline-block;
+  color: var(--blue-deep);
+  background: var(--gold);
+  font-size: 13px;
+  font-weight: 800;
+  padding: 6px 14px;
+  border-radius: 100px;
+  margin-bottom: 20px;
+  transform: rotate(-1.5deg);
+}
+
+.hero h1 {
+  font-size: 52px;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  margin-bottom: 20px;
+}
+
+.hero p {
+  font-size: 18px;
+  line-height: 1.6;
+  color: var(--cream-muted);
+  max-width: 540px;
+  margin-bottom: 32px;
+}
+
+.hero-ctas {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+/* ---------- Stats ---------- */
+.stats-section {
+  padding: 10px 0 70px;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.stat-card {
+  background: var(--blue-card);
+  border: 1px solid var(--cream-faint);
+  border-radius: 20px;
+  padding: 28px 24px;
+  text-align: center;
+}
+
+.stat-number {
+  font-family: 'Baloo 2', sans-serif;
+  font-weight: 800;
+  font-size: 38px;
+  color: var(--gold);
+  margin-bottom: 6px;
+}
+
+.stat-label {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--cream-muted);
+}
+
+.stats-note {
+  text-align: center;
+  font-size: 12.5px;
+  color: var(--cream-muted);
+  margin-top: 16px;
+  font-style: italic;
+}
+
+/* ---------- How it works ---------- */
+.section-heading {
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.section-eyebrow {
+  color: var(--gold);
+  font-size: 13px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 10px;
+}
+
+.section-heading h2 {
+  font-size: 34px;
+}
+
+.how-it-works {
+  padding: 50px 0 80px;
+}
+
+.step {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 56px;
+  align-items: center;
+  margin-bottom: 90px;
+}
+
+.step:last-child {
+  margin-bottom: 0;
+}
+
+/* Even steps: image comes first (left), text second (right) */
+.step:nth-child(even) .step-text {
+  order: 2;
+}
+
+.step-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--gold);
+  color: var(--blue-deep);
+  font-weight: 800;
+  font-size: 15px;
+  margin-bottom: 16px;
+}
+
+.step-text h3 {
+  font-size: 26px;
+  margin-bottom: 10px;
+}
+
+.step-text p {
+  font-size: 15.5px;
+  line-height: 1.6;
+  color: var(--cream-muted);
+}
+
+.step-image {
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--cream-faint);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+}
+
+.step-image img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* ---------- Why I built this ---------- */
+.story-section {
+  padding: 70px 0 100px;
+}
+
+.story-layout {
+  display: grid;
+  grid-template-columns: 1fr 260px;
+  gap: 36px;
+  align-items: start;
+  max-width: 980px;
+  margin: 0 auto;
+}
+
+.story-card {
+  position: relative;
+  background: var(--blue-card);
+  border: 1px solid var(--cream-faint);
+  border-left: 4px solid var(--gold);
+  border-radius: 4px 20px 20px 4px;
+  padding: 96px 44px 40px;
+  overflow: hidden;
+}
+
+.story-quote-mark {
+  position: absolute;
+  top: 28px;
+  left: 32px;
+  width: 64px;
+  height: 64px;
+  color: var(--gold);
+  opacity: 0.22;
+  pointer-events: none;
+  user-select: none;
+}
+
+.story-card p {
+  position: relative;
+  font-size: 16px;
+  line-height: 1.75;
+  color: var(--cream);
+  margin-bottom: 18px;
+}
+
+.story-card p:first-of-type {
+  font-size: 18.5px;
+  font-weight: 600;
+  color: var(--cream);
+}
+
+.story-card p:last-of-type {
+  margin-bottom: 0;
+}
+
+.story-signoff {
+  position: relative;
+  margin-top: 26px;
+  padding-top: 22px;
+  border-top: 1px solid var(--cream-faint);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.story-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.story-signoff-text {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--cream-muted);
+}
+
+.story-signoff-text span {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--cream-muted);
+  opacity: 0.7;
+  margin-top: 2px;
+}
+
+.story-stat {
+  background: var(--gold);
+  border-radius: 20px;
+  padding: 32px 24px;
+  text-align: center;
+  position: sticky;
+  top: 120px;
+}
+
+.story-stat-number {
+  font-family: 'Baloo 2', sans-serif;
+  font-weight: 800;
+  font-size: 64px;
+  color: var(--blue-deep);
+  line-height: 1;
+  margin-bottom: 10px;
+}
+
+.story-stat-label {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--blue-deep);
+  line-height: 1.4;
+}
+
+.story-stat-sub {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(20, 44, 104, 0.2);
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(20, 44, 104, 0.75);
+  line-height: 1.5;
+}
+
+/* ---------- Responsive ---------- */
+
+/* 860px — Hero font shrinks, stats + steps go 1-col */
+@media (max-width: 860px) {
+  .landing-nav {
+    padding: 18px 20px;
+  }
+
+  .landing-main {
+    padding: 0 20px;
+  }
+
+  .hero h1 {
+    font-size: 36px;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .step {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  /* Reset the even-step text-order reorder on mobile */
+  .step:nth-child(even) .step-text {
+    order: 0;
+  }
+}
+
+/* 760px — Story layout stacks, stat card unsticks */
+@media (max-width: 760px) {
+  .story-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .story-stat {
+    position: static;
+  }
+}
+
+/* 640px — Footer stacks */
+@media (max-width: 640px) {
+  .footer-inner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+.preferred-hours-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.preferred-window-note {
+  font-size: 12px;
+  color: var(--cream-muted);
+  margin-top: 8px;
+  font-style: italic;
+}
+/* Regular Gala CSS */
+.gala-landing-main { max-width: 900px; margin: 0 auto; padding: 40px 24px; }
+.gala-hero { text-align: center; margin-bottom: 48px; }
+.gala-hero-title { font-size: 48px; margin: 16px 0; color: var(--gold); }
+.gala-hero-tagline { font-size: 24px; font-weight: bold; margin-bottom: 16px; }
+.gala-feature-pills { display: flex; justify-content: center; gap: 16px; margin-top: 24px; flex-wrap: wrap; }
+.gala-feature-pill { background: rgba(255,198,75,0.1); color: var(--gold); padding: 8px 16px; border-radius: 100px; font-size: 14px; font-weight: 600; }
+.gala-signin-card { background: var(--blue-card); padding: 32px; border-radius: 24px; max-width: 480px; margin: 0 auto; border: 1px solid rgba(255,255,255,0.05); }
+.gala-email-form { display: flex; flex-direction: column; gap: 16px; margin: 24px 0; }
+.gala-how-section { margin-top: 80px; }
+.gala-steps { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; margin-top: 32px; }
+.gala-step { background: rgba(255,255,255,0.02); padding: 24px; border-radius: 16px; }
+.gala-step-num { width: 32px; height: 32px; background: var(--gold); color: var(--blue-deep); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; margin-bottom: 16px; }
+.gala-dashboard-main { max-width: 800px; margin: 0 auto; padding: 40px 24px; }
+.gala-dashboard-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; }
+.gala-create-form-container { margin-bottom: 32px; padding: 24px; }
+.gala-create-form { display: flex; flex-direction: column; gap: 16px; margin-top: 16px; }
+.gala-create-actions { display: flex; gap: 12px; justify-content: flex-end; margin-top: 16px; }
+.gala-list { display: flex; flex-direction: column; gap: 16px; }
+.gala-card { display: block; text-decoration: none; color: inherit; padding: 20px; transition: transform 0.2s, background 0.2s; }
+.gala-card:hover { transform: translateY(-2px); background: rgba(255,255,255,0.04); }
+.gala-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.gala-card-title { margin: 0; font-size: 20px; color: var(--gold); font-family: 'Baloo 2'; }
+.gala-status-badge { font-size: 12px; padding: 4px 12px; border-radius: 100px; font-weight: bold; }
+.gala-status-badge.confirmed { background: rgba(255,198,75,0.15); color: var(--gold); }
+.gala-status-badge.pending { background: rgba(255,255,255,0.1); color: var(--cream); }
+.gala-room-main { max-width: 1000px; margin: 0 auto; padding: 40px 24px; }
+.gala-room-header { text-align: center; margin-bottom: 32px; padding: 32px; }
+.gala-room-meta { display: flex; justify-content: center; gap: 16px; align-items: center; margin-top: 12px; color: var(--cream-muted); }
+.gala-tabs { display: flex; gap: 8px; justify-content: center; margin-bottom: 32px; }
+.gala-tab-content { background: var(--blue-card); padding: 32px; border-radius: 24px; }
+.weekly-grid { display: grid; grid-template-columns: 54px repeat(7, minmax(58px, 1fr)); }
+.gala-exception-item { display: flex; justify-content: space-between; align-items: center; padding: 16px; background: rgba(255,255,255,0.02); border-radius: 12px; margin-bottom: 12px; }
