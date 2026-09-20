@@ -26,6 +26,7 @@ export function CreatePage() {
   const [toastMessage, setToastMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [legalModalType, setLegalModalType] = useState(null);
+  const [honeypot, setHoneypot] = useState('');
 
   const showToast = (msg) => {
     setToastMessage(msg);
@@ -75,6 +76,7 @@ export function CreatePage() {
 
   const handleCreatePlan = async (e) => {
     e.preventDefault();
+    if (honeypot) return; // Silent rejection for bots
     if (!userName.trim()) { showToast('Please enter your name!'); return; }
     if (!planName.trim()) { showToast('Please enter a plan name!'); return; }
     setIsLoading(true);
@@ -148,6 +150,8 @@ export function CreatePage() {
           setPreferredStart={setPreferredStart}
           preferredEnd={preferredEnd}
           setPreferredEnd={setPreferredEnd}
+          honeypot={honeypot}
+          setHoneypot={setHoneypot}
         />
       </main>
       <LegalModal type={legalModalType} onClose={() => setLegalModalType(null)} />

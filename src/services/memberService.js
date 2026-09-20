@@ -1,17 +1,18 @@
 import { supabase } from '../utils/supabaseClient';
 
 export async function joinRoom(roomId, displayName) {
-  const { data, error } = await supabase
-    .from('members')
-    .insert([{
-      room_id: roomId,
-      display_name: displayName
-    }])
-    .select()
-    .single();
+  const response = await fetch('/api/joinRoom', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ roomId, displayName })
+  });
 
-  if (error) throw error;
-  return data;
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({}));
+    throw new Error(err.error || 'Failed to join room via secure API');
+  }
+
+  return response.json();
 }
 
 export async function getMemberByName(roomId, displayName) {

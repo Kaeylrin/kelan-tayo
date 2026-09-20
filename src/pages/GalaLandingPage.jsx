@@ -8,6 +8,7 @@ import { sendMagicLink, getSession } from '../services/authService.js';
 export function GalaLandingPage() {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
+  const [honeypot, setHoneypot] = useState('');
   const [status, setStatus] = useState('idle');
   const [errorMsg, setErrorMsg] = useState('');
   const [legalModalType, setLegalModalType] = useState(null);
@@ -20,6 +21,7 @@ export function GalaLandingPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (honeypot) return;
     const trimmed = email.trim();
     if (!trimmed) return;
     setStatus('loading');
@@ -91,6 +93,7 @@ export function GalaLandingPage() {
                   <h3 className="display">Save your spot</h3>
                   <p>Enter your email and we'll send you a magic link &mdash; no password needed.</p>
                   <form onSubmit={handleSubmit}>
+                    <input type="text" name="website" tabIndex={-1} autoComplete="off" style={{ opacity: 0, position: 'absolute', top: 0, left: 0, height: 0, width: 0, zIndex: -1 }} value={honeypot} onChange={(e) => setHoneypot(e.target.value)} />
                     <span className="spot-label">Email address</span>
                     <input
                       className="spot-input"
@@ -157,3 +160,4 @@ export function GalaLandingPage() {
     </>
   );
 }
+

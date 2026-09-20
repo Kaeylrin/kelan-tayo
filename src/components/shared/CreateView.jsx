@@ -23,7 +23,9 @@ export function CreateView({
   preferredStart,
   setPreferredStart,
   preferredEnd,
-  setPreferredEnd
+  setPreferredEnd,
+  honeypot,
+  setHoneypot
 }) {
   const [preferredPreset, setPreferredPreset] = useState('morning');
 
@@ -83,6 +85,7 @@ export function CreateView({
         {/* Create Plan Card */}
         <div className="create-card">
           <form onSubmit={handleCreatePlan}>
+            <input type="text" name="website" tabIndex={-1} autoComplete="off" style={{ opacity: 0, position: 'absolute', top: 0, left: 0, height: 0, width: 0, zIndex: -1 }} value={honeypot} onChange={(e) => setHoneypot(e.target.value)} />
             <label className="field-label" htmlFor="creatorNameInput">Your Name</label>
             <input
               className="field"

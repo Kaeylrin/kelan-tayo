@@ -4,22 +4,25 @@ import { generateRoomCode } from '../utils/storage';
 export async function createRoom(name, dateFrom, dateTo, preferredStart, preferredEnd) {
   const roomCode = generateRoomCode();
   
-  const { data, error } = await supabase
-    .from('rooms')
-    .insert([{
-      room_code: roomCode,
-      name: name,
-      date_from: dateFrom,
-      date_to: dateTo,
-      preferred_start: preferredStart || null,
-      preferred_end: preferredEnd || null,
-      status: 'open'
-    }])
-    .select()
-    .single();
+  const response = await fetch('/api/createRoom', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      roomCode,
+      name,
+      dateFrom,
+      dateTo,
+      preferredStart: preferredStart || null,
+      preferredEnd: preferredEnd || null
+    })
+  });
 
-  if (error) throw error;
-  return data;
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({}));
+    throw new Error(err.error || 'Failed to create room via secure API');
+  }
+
+  return response.json();
 }
 
 export async function updateRoomCreator(roomId, memberId) {
