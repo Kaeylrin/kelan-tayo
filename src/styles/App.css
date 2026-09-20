@@ -2345,3 +2345,13 @@ footer {
   .gala-steps-grid { grid-template-columns: 1fr; }
   .gala-hero h1 { font-size: 32px; }
 }
+
+/* gala-badge as a link should not have underline */
+a.gala-badge {
+  text-decoration: none;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+a.gala-badge:hover {
+  opacity: 0.85;
+}

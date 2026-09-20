@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 
 /**
  * Navbar — Always Pill
@@ -19,6 +19,7 @@ import { Link, useNavigate } from 'react-router-dom';
 export function Navbar({ isLandingPage = false, isRoomPage = false, activeTab, setActiveTab, currentRoom, onShowToast, onLeaveRoom }) {
   const [scrolled, setScrolled] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     if (!isLandingPage) return; // Only apply shrinking pill behavior on the landing page
@@ -28,35 +29,36 @@ export function Navbar({ isLandingPage = false, isRoomPage = false, activeTab, s
     return () => window.removeEventListener('scroll', onScroll);
   }, [isLandingPage]);
 
+  const handleLogoClick = () => {
+    if (location.pathname === '/') {
+      // Already on landing page — smooth scroll to top
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      navigate('/');
+    }
+  };
+
+  // Show the "Regular Gala" badge + "Create a plan" CTA on both landing and create pages
+  const showNavCtas = isLandingPage || (!isRoomPage);
+
   return (
     <div className={`floating-nav-wrapper ${scrolled ? 'scrolled' : ''} ${!isLandingPage ? 'relative-nav' : ''}`}>
       <nav className="floating-navbar" aria-label="Main Navigation">
-        {/* Logo — always links to / */}
+        {/* Logo — smooth scroll to top on landing, navigate to / elsewhere */}
         <div
           className="logo"
-          onClick={() => navigate('/')}
+          onClick={handleLogoClick}
           role="button"
           tabIndex={0}
-          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') navigate('/'); }}
+          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') handleLogoClick(); }}
         >
           kelan<span>tayo</span>
         </div>
 
-        {/* Right side: CTA on landing, tabs on room, nothing on /create */}
-        {isLandingPage && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
-            <Link 
-              to="/gala" 
-              style={{ 
-                color: 'var(--cream)', 
-                textDecoration: 'none', 
-                fontSize: '14px', 
-                fontWeight: '600',
-                transition: 'opacity 0.2s',
-              }}
-              onMouseOver={(e) => e.target.style.opacity = '0.7'}
-              onMouseOut={(e) => e.target.style.opacity = '1'}
-            >
+        {/* Right side: badge + CTA on landing & create, tabs on room */}
+        {showNavCtas && !isRoomPage && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+            <Link to="/gala" className="gala-badge">
               Regular Gala
             </Link>
             <Link to="/create" className="nav-cta">
