@@ -1,25 +1,34 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useScrollPosition } from '../../hooks/useScrollPosition.js';
 
 /**
  * Navbar for /gala/* routes.
- * Matches the reference design: logo | gala-badge | Create a plan CTA
+ * Shows: logo | Create a plan CTA (no "Regular Gala" since we're already here)
  */
 export function GalaNavbar({ rightSlot }) {
   const isScrolled = useScrollPosition();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleLogoClick = () => {
+    if (location.pathname === '/gala') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      navigate('/');
+    }
+  };
 
   return (
     <div className={`floating-nav-wrapper ${isScrolled ? 'scrolled' : ''}`}>
       <nav className="floating-navbar" aria-label="Regular Gala Navigation">
         <div
           className="logo"
-          onClick={() => navigate('/')}
+          onClick={handleLogoClick}
           role="button"
           tabIndex={0}
           onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === ' ') navigate('/');
+            if (e.key === 'Enter' || e.key === ' ') handleLogoClick();
           }}
           title="Back to Kelan Tayo home"
         >
@@ -27,7 +36,6 @@ export function GalaNavbar({ rightSlot }) {
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-          <span className="gala-badge">Regular Gala</span>
           {rightSlot || (
             <Link to="/create" className="nav-cta">
               Create a plan

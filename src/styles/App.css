@@ -1,4 +1,4 @@
-:root {
+﻿:root {
   --blue: #1B3A87;
   --blue-deep: #142C68;
   --blue-card: #1F4299;
@@ -1600,7 +1600,7 @@ footer {
   height: 140px;
 }
 
-/* Landing logo (link variant — no underline) */
+/* Landing logo (link variant â€” no underline) */
 .landing-logo {
   font-family: 'Baloo 2', sans-serif;
   font-size: 26px;
@@ -1918,7 +1918,7 @@ footer {
 
 /* ---------- Responsive ---------- */
 
-/* 860px — Hero font shrinks, stats + steps go 1-col */
+/* 860px â€” Hero font shrinks, stats + steps go 1-col */
 @media (max-width: 860px) {
   .landing-nav {
     padding: 18px 20px;
@@ -1947,7 +1947,7 @@ footer {
   }
 }
 
-/* 760px — Story layout stacks, stat card unsticks */
+/* 760px â€” Story layout stacks, stat card unsticks */
 @media (max-width: 760px) {
   .story-layout {
     grid-template-columns: 1fr;
@@ -1958,7 +1958,7 @@ footer {
   }
 }
 
-/* 640px — Footer stacks */
+/* 640px â€” Footer stacks */
 @media (max-width: 640px) {
   .footer-inner {
     flex-direction: column;
@@ -2354,4 +2354,22 @@ a.gala-badge {
 }
 a.gala-badge:hover {
   opacity: 0.85;
+}
+
+/* Nav secondary link — matches 'See how it works' btn-secondary style */
+.nav-link-secondary {
+  background: transparent;
+  border: 1px solid var(--cream-faint);
+  color: var(--cream);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  padding: 9px 18px;
+  border-radius: 100px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+.nav-link-secondary:hover {
+  opacity: 0.8;
 }

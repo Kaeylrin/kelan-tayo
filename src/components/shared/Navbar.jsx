@@ -55,15 +55,19 @@ export function Navbar({ isLandingPage = false, isRoomPage = false, activeTab, s
           kelan<span>tayo</span>
         </div>
 
-        {/* Right side: badge + CTA on landing & create, tabs on room */}
-        {showNavCtas && !isRoomPage && (
+        {/* Right side: context-aware links (hide the one you're already on) */}
+        {!isRoomPage && (
           <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-            <Link to="/gala" className="gala-badge">
-              Regular Gala
-            </Link>
-            <Link to="/create" className="nav-cta">
-              Create a plan
-            </Link>
+            {location.pathname !== '/gala' && (
+              <Link to="/gala" className="nav-link-secondary">
+                Regular Gala
+              </Link>
+            )}
+            {location.pathname !== '/create' && (
+              <Link to="/create" className="nav-cta">
+                Create a plan
+              </Link>
+            )}
           </div>
         )}
 
