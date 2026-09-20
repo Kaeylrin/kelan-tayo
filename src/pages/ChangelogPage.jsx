@@ -17,11 +17,28 @@ export function ChangelogPage() {
         </div>
 
         <div className="changelog-list">
+          {/* Version 1.3.2 */}
+          <div className="changelog-item">
+            <div className="changelog-meta">
+              <h2>v1.3.2</h2>
+              <span className="changelog-date">September 20, 2026</span>
+            </div>
+            <div className="changelog-content">
+              <div className="changelog-group">
+                <span className="badge changed">CHANGED</span>
+                <ul>
+                  <li>Updated Privacy Policy and Terms of Service to reflect the new Regular Gala features and automated abuse protection measures.</li>
+                  <li>Overhauled formatting in legal modals for better readability.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
           {/* Version 1.3.1 */}
           <div className="changelog-item">
             <div className="changelog-meta">
               <h2>v1.3.1</h2>
-              <span className="changelog-date">September 20, 2026</span>
+              <span className="changelog-date">September 19, 2026</span>
             </div>
             <div className="changelog-content">
               <div className="changelog-group">
@@ -46,7 +63,7 @@ export function ChangelogPage() {
           <div className="changelog-item">
             <div className="changelog-meta">
               <h2>v1.3.0</h2>
-              <span className="changelog-date">September 20, 2026</span>
+              <span className="changelog-date">September 17, 2026</span>
             </div>
             <div className="changelog-content">
               <div className="changelog-group">
@@ -81,7 +98,7 @@ export function ChangelogPage() {
           <div className="changelog-item">
             <div className="changelog-meta">
               <h2>v1.2.1</h2>
-              <span className="changelog-date">September 19, 2026</span>
+              <span className="changelog-date">September 15, 2026</span>
             </div>
             <div className="changelog-content">
               <div className="changelog-group">
@@ -105,7 +122,7 @@ export function ChangelogPage() {
           <div className="changelog-item">
             <div className="changelog-meta">
               <h2>v1.0.12</h2>
-              <span className="changelog-date">September 15, 2026</span>
+              <span className="changelog-date">September 13, 2026</span>
             </div>
             <div className="changelog-content">
               <div className="changelog-group">

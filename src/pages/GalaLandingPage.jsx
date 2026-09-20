@@ -91,7 +91,7 @@ export function GalaLandingPage() {
               ) : (
                 <>
                   <h3 className="display">Save your spot</h3>
-                  <p>Enter your email and we'll send you a magic link &mdash; no password needed.</p>
+                  <p>Enter your email and we'll send you a magic link. No password needed.</p>
                   <form onSubmit={handleSubmit}>
                     <input type="text" name="website" tabIndex={-1} autoComplete="off" style={{ opacity: 0, position: 'absolute', top: 0, left: 0, height: 0, width: 0, zIndex: -1 }} value={honeypot} onChange={(e) => setHoneypot(e.target.value)} />
                     <span className="spot-label">Email address</span>
