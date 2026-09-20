@@ -71,8 +71,6 @@ export default function PrivacyPage() {
           <h3 style={{ marginTop: '32px', marginBottom: '12px', color: 'var(--gold)', fontSize: '1.2rem' }}>11. Changes to This Policy</h3>
           <p style={{ marginBottom: '16px', lineHeight: '1.6' }}>This policy may be updated as the app changes. The version number and last updated date at the top of this document reflect the most current version. Past updates are summarized on the app's changelog page.</p>
 
-          <h3 style={{ marginTop: '32px', marginBottom: '12px', color: 'var(--gold)', fontSize: '1.2rem' }}>12. Contact</h3>
-          <p style={{ marginBottom: '16px', lineHeight: '1.6' }}>Questions about this policy, or a request to remove room, gala, or profile data, can be sent to the app's creator, Wrenier, through the contact details provided with the app.</p>
         </div>
       </main>
       <Footer />
