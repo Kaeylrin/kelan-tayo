@@ -20,7 +20,15 @@ export function HeroSection({ onCreatePlan }) {
         <Link to="/create" className="btn-primary" onClick={onCreatePlan}>
           Create a plan
         </Link>
-        <a href="#how-it-works" className="btn-secondary">
+        <a
+          href="#how-it-works"
+          className="btn-secondary"
+          onClick={(e) => {
+            e.preventDefault();
+            const target = document.getElementById('how-it-works');
+            if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }}
+        >
           See how it works
         </a>
       </div>

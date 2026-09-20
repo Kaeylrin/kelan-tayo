@@ -1,10 +1,10 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useScrollPosition } from '../../hooks/useScrollPosition.js';
 
 /**
- * Navbar used across all /gala/* routes.
- * Accepts optional isLandingPage prop (currently unused but kept for API parity).
+ * Navbar for /gala/* routes.
+ * Matches the reference design: logo | gala-badge | Create a plan CTA
  */
 export function GalaNavbar({ rightSlot }) {
   const isScrolled = useScrollPosition();
@@ -26,12 +26,13 @@ export function GalaNavbar({ rightSlot }) {
           kelan<span>tayo</span>
         </div>
 
-        <div className="gala-nav-center">
-          <span className="gala-nav-badge">Regular Gala</span>
-        </div>
-
-        <div className="gala-nav-right">
-          {rightSlot}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+          <span className="gala-badge">Regular Gala</span>
+          {rightSlot || (
+            <Link to="/create" className="nav-cta">
+              Create a plan
+            </Link>
+          )}
         </div>
       </nav>
     </div>

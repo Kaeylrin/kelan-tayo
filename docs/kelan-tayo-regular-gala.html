@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kelan Tayo — Find the day everyone's actually free</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blue: #1B3A87;
+    --blue-deep: #142C68;
+    --blue-card: #1F4299;
+    --cream: #F6F1E7;
+    --cream-muted: rgba(246,241,231,0.62);
+    --cream-faint: rgba(246,241,231,0.14);
+    --gold: #FFC64B;
+    --coral: #FF6B5C;
+    --mint: #6FE0B8;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background-color: var(--blue);
+    background-image:
+      linear-gradient(rgba(246,241,231,0.055) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(246,241,231,0.055) 1px, transparent 1px);
+    background-size: 42px 42px;
+    color: var(--cream);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .display {
+    font-family: 'Baloo 2', sans-serif;
+    font-weight: 800;
+  }
+
+  a { color: inherit; }
+
+  /* ---------- Nav ---------- */
+  .nav-spacer {
+    height: 84px;
+  }
+
+  nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 22px 40px;
+    border-bottom: 1px solid var(--cream-faint);
+    background: transparent;
+    transition: top 0.35s ease, left 0.35s ease, right 0.35s ease,
+                padding 0.35s ease, border-radius 0.35s ease,
+                background 0.35s ease, border-color 0.35s ease,
+                box-shadow 0.35s ease, max-width 0.35s ease,
+                margin 0.35s ease;
+  }
+
+  nav.nav-scrolled {
+    top: 18px;
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    max-width: 720px;
+    width: calc(100% - 48px);
+    padding: 12px 20px;
+    border-radius: 100px;
+    background: rgba(20, 44, 104, 0.82);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--cream-faint);
+    box-shadow: 0 12px 30px rgba(8, 18, 46, 0.35);
+  }
+
+  nav.nav-scrolled .logo {
+    font-size: 21px;
+  }
+
+  nav.nav-scrolled .nav-cta {
+    padding: 9px 18px;
+    font-size: 13px;
+  }
+
+  .logo {
+    font-family: 'Baloo 2', sans-serif;
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    transform: rotate(-2deg);
+    display: inline-block;
+  }
+
+  .logo span { color: var(--gold); }
+
+  .nav-cta {
+    background: var(--gold);
+    color: var(--blue-deep);
+    border: none;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 800;
+    font-size: 14px;
+    padding: 11px 22px;
+    border-radius: 100px;
+    cursor: pointer;
+    text-decoration: none;
+    box-shadow: 0 4px 0 #C9910F;
+  }
+
+  main {
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: 0 40px;
+  }
+
+  /* ---------- Hero ---------- */
+  .hero {
+    padding: 90px 0 70px;
+    max-width: 720px;
+  }
+
+  .eyebrow {
+    display: inline-block;
+    color: var(--blue-deep);
+    background: var(--gold);
+    font-size: 13px;
+    font-weight: 800;
+    padding: 6px 14px;
+    border-radius: 100px;
+    margin-bottom: 20px;
+    transform: rotate(-1.5deg);
+  }
+
+  .hero h1 {
+    font-size: 52px;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    margin-bottom: 20px;
+  }
+
+  .hero p {
+    font-size: 18px;
+    line-height: 1.6;
+    color: var(--cream-muted);
+    max-width: 540px;
+    margin-bottom: 32px;
+  }
+
+  .hero-ctas {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+
+  .btn-primary {
+    background: var(--gold);
+    color: var(--blue-deep);
+    border: none;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 800;
+    font-size: 15px;
+    padding: 15px 26px;
+    border-radius: 12px;
+    cursor: pointer;
+    text-decoration: none;
+    box-shadow: 0 4px 0 #C9910F;
+  }
+
+  .btn-secondary {
+    background: transparent;
+    border: 1px solid var(--cream-faint);
+    color: var(--cream);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    padding: 15px 26px;
+    border-radius: 12px;
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  /* ---------- Stats ---------- */
+  .stats-section {
+    padding: 10px 0 70px;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+
+  .stat-card {
+    background: var(--blue-card);
+    border: 1px solid var(--cream-faint);
+    border-radius: 20px;
+    padding: 28px 24px;
+    text-align: center;
+  }
+
+  .stat-number {
+    font-family: 'Baloo 2', sans-serif;
+    font-weight: 800;
+    font-size: 38px;
+    color: var(--gold);
+    margin-bottom: 6px;
+  }
+
+  .stat-label {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--cream-muted);
+  }
+
+  .stats-note {
+    text-align: center;
+    font-size: 12.5px;
+    color: var(--cream-muted);
+    margin-top: 16px;
+    font-style: italic;
+  }
+
+  /* ---------- How it works ---------- */
+  .section-heading {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+
+  .section-eyebrow {
+    color: var(--gold);
+    font-size: 13px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 10px;
+  }
+
+  .section-heading h2 {
+    font-size: 34px;
+  }
+
+  .how-it-works {
+    padding: 50px 0 80px;
+  }
+
+  .step {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 56px;
+    align-items: center;
+    margin-bottom: 90px;
+  }
+
+  .step:last-child { margin-bottom: 0; }
+
+  .step:nth-child(even) .step-text { order: 2; }
+
+  .step-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: var(--gold);
+    color: var(--blue-deep);
+    font-weight: 800;
+    font-size: 15px;
+    margin-bottom: 16px;
+  }
+
+  .step-text h3 {
+    font-size: 26px;
+    margin-bottom: 10px;
+  }
+
+  .step-text p {
+    font-size: 15.5px;
+    line-height: 1.6;
+    color: var(--cream-muted);
+  }
+
+  .step-image {
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid var(--cream-faint);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+  }
+
+  .step-image img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  /* ---------- Why I built this ---------- */
+  .story-section {
+    padding: 70px 0 100px;
+  }
+
+  .story-layout {
+    display: grid;
+    grid-template-columns: 1fr 260px;
+    gap: 36px;
+    align-items: start;
+    max-width: 980px;
+    margin: 0 auto;
+  }
+
+  .story-card {
+    position: relative;
+    background: var(--blue-card);
+    border: 1px solid var(--cream-faint);
+    border-left: 4px solid var(--gold);
+    border-radius: 4px 20px 20px 4px;
+    padding: 96px 44px 40px;
+    overflow: hidden;
+  }
+
+  .story-quote-mark {
+    position: absolute;
+    top: 28px;
+    left: 32px;
+    width: 64px;
+    height: 64px;
+    color: var(--gold);
+    opacity: 0.22;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .story-card p {
+    position: relative;
+    font-size: 16px;
+    line-height: 1.75;
+    color: var(--cream);
+    margin-bottom: 18px;
+  }
+
+  .story-card p:first-of-type {
+    font-size: 18.5px;
+    font-weight: 600;
+    color: var(--cream);
+  }
+
+  .story-card p:last-of-type { margin-bottom: 0; }
+
+  .story-signoff {
+    position: relative;
+    margin-top: 26px;
+    padding-top: 22px;
+    border-top: 1px solid var(--cream-faint);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .story-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: var(--gold);
+    color: var(--blue-deep);
+    font-family: 'Baloo 2', sans-serif;
+    font-weight: 800;
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .story-signoff-text {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--cream-muted);
+  }
+
+  .story-signoff-text span {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--cream-muted);
+    opacity: 0.7;
+    margin-top: 2px;
+  }
+
+  .story-stat {
+    background: var(--gold);
+    border-radius: 20px;
+    padding: 32px 24px;
+    text-align: center;
+    position: sticky;
+    top: 120px;
+  }
+
+  .story-stat-number {
+    font-family: 'Baloo 2', sans-serif;
+    font-weight: 800;
+    font-size: 64px;
+    color: var(--blue-deep);
+    line-height: 1;
+    margin-bottom: 10px;
+  }
+
+  .story-stat-label {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--blue-deep);
+    line-height: 1.4;
+  }
+
+  .story-stat-sub {
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid rgba(20,44,104,0.2);
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(20,44,104,0.75);
+    line-height: 1.5;
+  }
+
+  @media (max-width: 760px) {
+    .story-layout { grid-template-columns: 1fr; }
+    .story-stat { position: static; }
+  }
+
+  /* ---------- Footer ---------- */
+  footer {
+    border-top: 1px solid var(--cream-faint);
+    padding: 28px 40px 36px;
+  }
+
+  .footer-inner {
+    max-width: 1140px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+
+  .footer-links {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .footer-links a {
+    color: var(--cream-muted);
+    text-decoration: none;
+  }
+
+  .footer-links a:hover { color: var(--cream); }
+
+  .footer-version {
+    color: var(--cream-muted);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border: 1px solid var(--cream-faint);
+    border-radius: 100px;
+  }
+
+  .footer-copy {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--cream-muted);
+    font-weight: 500;
+  }
+
+  .heart-icon {
+    width: 14px;
+    height: 14px;
+    color: var(--cream-muted);
+    flex-shrink: 0;
+  }
+
+  .footer-dot { margin: 0 2px; }
+
+  /* ---------- Gala nav badge ---------- */
+  .gala-badge {
+    background: var(--cream-faint);
+    border: 1px solid var(--cream-faint);
+    color: var(--gold);
+    font-family: 'Baloo 2', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    padding: 8px 16px;
+    border-radius: 100px;
+  }
+
+  /* ---------- Gala hero ---------- */
+  .gala-hero {
+    padding: 90px 0 60px;
+    text-align: center;
+    max-width: 780px;
+    margin: 0 auto;
+  }
+
+  .gala-hero .eyebrow {
+    transform: none;
+  }
+
+  .gala-hero h1 {
+    font-size: 46px;
+    line-height: 1.15;
+    margin-bottom: 18px;
+  }
+
+  .gala-hero p {
+    font-size: 17px;
+    line-height: 1.65;
+    color: var(--cream-muted);
+    max-width: 620px;
+    margin: 0 auto 34px;
+  }
+
+  .gala-chips {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .gala-chip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--blue-card);
+    border: 1px solid var(--cream-faint);
+    border-radius: 100px;
+    padding: 10px 18px;
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--cream);
+  }
+
+  .gala-chip .chip-icon {
+    width: 16px;
+    height: 16px;
+    color: var(--gold);
+    flex-shrink: 0;
+  }
+
+  /* ---------- Save your spot card ---------- */
+  .spot-section {
+    padding: 20px 0 80px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .spot-card {
+    background: var(--blue-card);
+    border: 1px solid var(--cream-faint);
+    border-radius: 22px;
+    padding: 40px;
+    max-width: 460px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 14px 0 rgba(10,20,50,0.25);
+  }
+
+  .spot-card h3 {
+    font-size: 24px;
+    margin-bottom: 10px;
+  }
+
+  .spot-card p {
+    font-size: 14.5px;
+    line-height: 1.6;
+    color: var(--cream-muted);
+    margin-bottom: 26px;
+  }
+
+  .spot-label {
+    display: block;
+    text-align: left;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--cream-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 8px;
+  }
+
+  .spot-input {
+    width: 100%;
+    background: var(--blue-deep);
+    border: 1px solid var(--cream-faint);
+    border-radius: 12px;
+    padding: 14px 16px;
+    color: var(--cream);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 15px;
+    margin-bottom: 18px;
+  }
+
+  .spot-input::placeholder { color: rgba(246,241,231,0.35); }
+
+  .spot-btn {
+    width: 100%;
+    background: var(--gold);
+    color: var(--blue-deep);
+    border: none;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 800;
+    font-size: 15px;
+    padding: 15px 20px;
+    border-radius: 12px;
+    cursor: pointer;
+    box-shadow: 0 4px 0 #C9910F;
+    margin-bottom: 16px;
+  }
+
+  .spot-note {
+    font-size: 12.5px;
+    color: var(--cream-muted);
+    font-weight: 500;
+  }
+
+  /* ---------- Gala how it works ---------- */
+  .gala-step-card {
+    background: var(--blue-card);
+    border: 1px solid var(--cream-faint);
+    border-radius: 20px;
+    padding: 30px 26px;
+    text-align: left;
+  }
+
+  .gala-steps-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+
+  .gala-step-card .step-number {
+    margin-bottom: 16px;
+  }
+
+  .gala-step-card h3 {
+    font-size: 19px;
+    margin-bottom: 8px;
+  }
+
+  .gala-step-card p {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--cream-muted);
+  }
+
+  /* ---------- Reassurance strip ---------- */
+  .reassure-section {
+    padding: 10px 0 90px;
+  }
+
+  .reassure-card {
+    max-width: 780px;
+    margin: 0 auto;
+    text-align: center;
+    padding: 28px 32px;
+    border: 1px dashed var(--cream-faint);
+    border-radius: 18px;
+  }
+
+  .reassure-card p {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--cream-muted);
+  }
+
+  .reassure-card strong {
+    color: var(--cream);
+  }
+
+  @media (max-width: 860px) {
+    .gala-steps-grid { grid-template-columns: 1fr; }
+    .gala-hero h1 { font-size: 32px; }
+    nav { padding: 18px 20px; }
+    main { padding: 0 20px; }
+  }
+
+  @media (max-width: 640px) {
+    .footer-inner { flex-direction: column; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">kelan<span>tayo</span></div>
+  <div style="display:flex; align-items:center; gap:14px;">
+    <span class="gala-badge">Regular Gala</span>
+    <a href="#" class="nav-cta">Create a plan</a>
+  </div>
+</nav>
+<div class="nav-spacer"></div>
+
+<main>
+
+  <section class="gala-hero">
+    <span class="eyebrow">for the plans you make every week</span>
+    <h1 class="display">Same crew. Same vibe. Set it once.</h1>
+    <p>For the badminton group that plays every Saturday, the tambayan crew that meets every Friday, the study group that grinds every week, stop re-planning the same plan. Set your recurring schedule once and Kelan Tayo tracks who's free every week.</p>
+    <div class="gala-chips">
+      <span class="gala-chip">
+        <svg class="chip-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10h18M7 3v4M17 3v4M5 6h14a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2Z"/></svg>
+        Recurring schedules
+      </span>
+      <span class="gala-chip">
+        <svg class="chip-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="9" r="6"/><circle cx="15" cy="15" r="6"/></svg>
+        Group overlap view
+      </span>
+      <span class="gala-chip">
+        <svg class="chip-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8Z"/></svg>
+        One-click exceptions
+      </span>
+    </div>
+  </section>
+
+  <section class="spot-section">
+    <div class="spot-card">
+      <h3 class="display">Save your spot</h3>
+      <p>Enter your email and we'll send you a magic link, no password needed.</p>
+      <span class="spot-label">Email address</span>
+      <input class="spot-input" type="email" placeholder="you@example.com">
+      <button class="spot-btn">Save your spot &rarr;</button>
+      <div class="spot-note">No account needed. Just an email.</div>
+    </div>
+  </section>
+
+  <section class="how-it-works">
+    <div class="section-heading">
+      <div class="section-eyebrow">How Regular Gala works</div>
+      <h2 class="display">Set it once. That's it.</h2>
+    </div>
+
+    <div class="gala-steps-grid">
+      <div class="gala-step-card">
+        <div class="step-number">1</div>
+        <h3 class="display">Create your gala</h3>
+        <p>Name it, whether it's the badminton squad or the Friday tambayan, and invite your crew with a link. No group chat spam needed.</p>
+      </div>
+      <div class="gala-step-card">
+        <div class="step-number">2</div>
+        <h3 class="display">Mark your weekly schedule</h3>
+        <p>Same drag-and-mark you already know from Kelan Tayo, just applied to your usual week instead of a one-off date range.</p>
+      </div>
+      <div class="gala-step-card">
+        <div class="step-number">3</div>
+        <h3 class="display">Set it and forget it</h3>
+        <p>The gala's owner confirms the recurring days once. Exceptions handle the one-off breaks, holidays, someone's out, no re-planning every week.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="reassure-section">
+    <div class="reassure-card">
+      <p><strong>Still the same Kelan Tayo.</strong> Regular Gala is built for recurring hangouts with your crew, not a work tool. The base app stays exactly as it is, no login, no accounts, create a one-off plan anytime without ever touching this.</p>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-links">
+      <a href="#">Privacy</a>
+      <a href="#">Terms</a>
+      <span class="footer-version">v1.2.0</span>
+    </div>
+    <div class="footer-copy">
+      Created by Wrenier
+      <svg class="heart-icon" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 21s-6.716-4.35-9.428-8.06C.86 10.42 1.2 7.2 3.6 5.4c2.1-1.58 4.9-1.1 6.4.9l2 2.6 2-2.6c1.5-2 4.3-2.48 6.4-.9 2.4 1.8 2.74 5.02 1.03 7.54C18.716 16.65 12 21 12 21z"/>
+      </svg>
+      <span class="footer-dot">&middot;</span>
+      Copyright &copy; 2026. All rights reserved.
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Nav: normal full-width bar at rest, becomes a floating pill
+  // once the hero is scrolled past. Threshold matches roughly
+  // where the hero ends so it doesn't trigger too early.
+  const navEl = document.querySelector('nav');
+  const SCROLL_THRESHOLD = 80;
+
+  function updateNavState() {
+    if (window.scrollY > SCROLL_THRESHOLD) {
+      navEl.classList.add('nav-scrolled');
+    } else {
+      navEl.classList.remove('nav-scrolled');
+    }
+  }
+
+  window.addEventListener('scroll', updateNavState, { passive: true });
+  updateNavState();
+
+  // Placeholder stat values — wire this up to get_public_stats() once
+  // the Supabase migration is live. Left as static numbers for now.
+  document.getElementById('statRooms').textContent = '—';
+  document.getElementById('statConfirmed').textContent = '—';
+  document.getElementById('statMembers').textContent = '—';
+</script>
+
+</body>
+</html>

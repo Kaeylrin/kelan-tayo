@@ -2,19 +2,20 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { GalaNavbar } from '../components/gala/GalaNavbar.jsx';
 import { Footer } from '../components/shared/Footer.jsx';
+import { LegalModal } from '../components/shared/Modals.jsx';
 import { sendMagicLink, getSession } from '../services/authService.js';
 
 /**
  * Route: /gala
  * Landing page for the Regular Gala feature.
- * If the user already has a session, redirects to /gala/dashboard.
- * Otherwise, shows the pitch + "Save your spot" magic-link form.
+ * Matches the reference design in docs/kelan-tayo-regular-gala.html
  */
 export function GalaLandingPage() {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState('idle'); // 'idle' | 'loading' | 'sent' | 'error'
   const [errorMsg, setErrorMsg] = useState('');
+  const [legalModalType, setLegalModalType] = useState(null);
 
   // Redirect if already signed in
   useEffect(() => {
@@ -43,34 +44,46 @@ export function GalaLandingPage() {
     <>
       <GalaNavbar />
 
-      <main className="gala-landing-main">
-        <div className="gala-landing">
-          {/* Hero */}
-          <div className="gala-hero">
-            <span className="eyebrow">✦ New in v1.2.1</span>
-            <h1 className="display gala-hero-title">Regular Gala</h1>
-            <p className="gala-hero-tagline">Same crew. Same vibe. Set it once.</p>
-            <p className="gala-hero-desc">
-              For the badminton group that plays every Saturday, the tambayan crew that meets every
-              Friday, the study group that grinds every week — stop re-planning the same plan.
-              Set your recurring schedule once and Kelan Tayo tracks who's free every week.
-            </p>
+      <main>
 
-            {/* Feature pills */}
-            <div className="gala-feature-pills">
-              <span className="gala-feature-pill">📅 Recurring schedules</span>
-              <span className="gala-feature-pill">👥 Group overlap view</span>
-              <span className="gala-feature-pill">⚡ One-click exceptions</span>
-            </div>
+        {/* ---- Hero ---- */}
+        <section className="gala-hero">
+          <span className="eyebrow">for the plans you make every week</span>
+          <h1 className="display">Same crew. Same vibe. Set it once.</h1>
+          <p>
+            For the badminton group that plays every Saturday, the tambayan crew that meets every
+            Friday, the study group that grinds every week — stop re-planning the same plan.
+            Set your recurring schedule once and Kelan Tayo tracks who's free every week.
+          </p>
+          <div className="gala-chips">
+            <span className="gala-chip">
+              <svg className="chip-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M3 10h18M7 3v4M17 3v4M5 6h14a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2Z"/>
+              </svg>
+              Recurring schedules
+            </span>
+            <span className="gala-chip">
+              <svg className="chip-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="9" cy="9" r="6"/><circle cx="15" cy="15" r="6"/>
+              </svg>
+              Group overlap view
+            </span>
+            <span className="gala-chip">
+              <svg className="chip-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M13 2 3 14h7l-1 8 10-12h-7l1-8Z"/>
+              </svg>
+              One-click exceptions
+            </span>
           </div>
+        </section>
 
-          {/* Sign-in card */}
-          <div className="gala-signin-card">
+        {/* ---- Save your spot card ---- */}
+        <section className="spot-section">
+          <div className="spot-card">
             {status === 'sent' ? (
-              <div className="gala-sent-state">
-                <div className="gala-sent-icon">📬</div>
-                <h2 className="display gala-sent-title">Check your email!</h2>
-                <p className="gala-sent-body">
+              <>
+                <h3 className="display">Check your email!</h3>
+                <p>
                   We sent a magic link to <strong>{email}</strong>. Click it to save your spot and
                   get started.
                 </p>
@@ -81,22 +94,16 @@ export function GalaLandingPage() {
                 >
                   Use a different email
                 </button>
-              </div>
+              </>
             ) : (
               <>
-                <div className="gala-signin-header">
-                  <h2 className="display gala-signin-title">Save your spot</h2>
-                  <p className="gala-signin-sub">
-                    Enter your email and we'll send you a magic link — no password needed.
-                  </p>
-                </div>
-
-                <form className="gala-email-form" onSubmit={handleSubmit}>
-                  <label className="field-sublabel" htmlFor="galaEmail">Email address</label>
+                <h3 className="display">Save your spot</h3>
+                <p>Enter your email and we'll send you a magic link — no password needed.</p>
+                <form onSubmit={handleSubmit}>
+                  <span className="spot-label">Email address</span>
                   <input
-                    id="galaEmail"
+                    className="spot-input"
                     type="email"
-                    className="field"
                     placeholder="you@example.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
@@ -105,62 +112,59 @@ export function GalaLandingPage() {
                     disabled={status === 'loading'}
                   />
                   {status === 'error' && (
-                    <p className="gala-form-error">{errorMsg}</p>
+                    <p style={{ color: 'var(--coral)', fontSize: '13px', marginBottom: '12px' }}>{errorMsg}</p>
                   )}
                   <button
-                    className="btn-primary"
+                    className="spot-btn"
                     type="submit"
                     disabled={status === 'loading'}
                   >
-                    {status === 'loading' ? (
-                      <>
-                        <span className="btn-spinner" />
-                        Sending…
-                      </>
-                    ) : (
-                      'Save your spot →'
-                    )}
+                    {status === 'loading' ? 'Sending...' : <>Save your spot &rarr;</>}
                   </button>
                 </form>
-
-                <p className="gala-signin-note">
-                  No account needed. Just an email. 🎉
-                </p>
+                <div className="spot-note">No account needed. Just an email.</div>
               </>
             )}
           </div>
-        </div>
+        </section>
 
-        {/* How it works section */}
-        <div className="gala-how-section">
-          <h2 className="display gala-how-title">How Regular Gala works</h2>
-          <div className="gala-steps">
-            <div className="gala-step">
-              <div className="gala-step-num">1</div>
-              <div className="gala-step-body">
-                <h4>Create a Regular Gala</h4>
-                <p>Name your crew — badminton barkada, tambayan, study group — and set a start date.</p>
-              </div>
+        {/* ---- How it works ---- */}
+        <section className="how-it-works">
+          <div className="section-heading">
+            <div className="section-eyebrow">How Regular Gala works</div>
+            <h2 className="display">Set it once. That's it.</h2>
+          </div>
+
+          <div className="gala-steps-grid">
+            <div className="gala-step-card">
+              <div className="step-number">1</div>
+              <h3 className="display">Create your gala</h3>
+              <p>Name it, whether it's the badminton squad or the Friday tambayan, and invite your crew with a link. No group chat spam needed.</p>
             </div>
-            <div className="gala-step">
-              <div className="gala-step-num">2</div>
-              <div className="gala-step-body">
-                <h4>Everyone marks their weekly free times</h4>
-                <p>Each member marks which hours they're busy on a weekly template. Once. Done.</p>
-              </div>
+            <div className="gala-step-card">
+              <div className="step-number">2</div>
+              <h3 className="display">Mark your weekly schedule</h3>
+              <p>Same drag-and-mark you already know from Kelan Tayo, just applied to your usual week instead of a one-off date range.</p>
             </div>
-            <div className="gala-step">
-              <div className="gala-step-num">3</div>
-              <div className="gala-step-body">
-                <h4>Confirm the recurring slot</h4>
-                <p>The group owner confirms the best day+time. Kelan Tayo locks it in and tracks exceptions automatically.</p>
-              </div>
+            <div className="gala-step-card">
+              <div className="step-number">3</div>
+              <h3 className="display">Set it and forget it</h3>
+              <p>The gala's owner confirms the recurring days once. Exceptions handle the one-off breaks, holidays, someone's out, no re-planning every week.</p>
             </div>
           </div>
-        </div>
+        </section>
+
+        {/* ---- Reassurance strip ---- */}
+        <section className="reassure-section">
+          <div className="reassure-card">
+            <p><strong>Still the same Kelan Tayo.</strong> Regular Gala is built for recurring hangouts with your crew, not a work tool. The base app stays exactly as it is, no login, no accounts, create a one-off plan anytime without ever touching this.</p>
+          </div>
+        </section>
+
       </main>
 
-      <Footer onOpenLegal={() => {}} />
+      <LegalModal type={legalModalType} onClose={() => setLegalModalType(null)} />
+      <Footer onOpenLegal={(type) => setLegalModalType(type)} />
     </>
   );
 }

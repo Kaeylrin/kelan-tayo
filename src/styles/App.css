@@ -2075,21 +2075,18 @@ footer {
 }
 
 
-/* --- LATEST FIXES --- */
+/* --- UI Fixes (scrolled nav blur, breathing space, hero buttons, internal nav) --- */
 
-/* 1. Blur back to scrolled navbar */
 .floating-nav-wrapper.scrolled .floating-navbar {
   background: rgba(20, 44, 104, 0.82) !important;
   backdrop-filter: blur(10px) !important;
   -webkit-backdrop-filter: blur(10px) !important;
 }
 
-/* 2. Increase breathing space */
 .landing-main {
   margin-top: 120px !important;
 }
 
-/* 3. Hero buttons exact styles */
 .hero-ctas .btn-primary, .hero-ctas .btn-secondary {
   height: 48px !important;
   box-sizing: border-box !important;
@@ -2116,12 +2113,235 @@ footer {
   color: var(--cream) !important;
 }
 
-/* 4. Navbar button vertical alignment */
 .nav-cta {
   margin-bottom: 4px !important;
 }
 
-/* 5. Make navbar relative on internal pages so it doesn't overlap dashboard */
 .floating-nav-wrapper.relative-nav {
   position: relative !important;
+}
+
+/* ---------- Regular Gala CSS ---------- */
+
+/* Gala nav badge */
+.gala-badge {
+  background: var(--cream-faint);
+  border: 1px solid var(--cream-faint);
+  color: var(--gold);
+  font-family: 'Baloo 2', sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  padding: 8px 16px;
+  border-radius: 100px;
+}
+
+/* Gala hero */
+.gala-hero {
+  padding: 90px 0 60px;
+  text-align: center;
+  max-width: 780px;
+  margin: 0 auto;
+}
+
+.gala-hero .eyebrow {
+  transform: none;
+}
+
+.gala-hero h1 {
+  font-size: 46px;
+  line-height: 1.15;
+  margin-bottom: 18px;
+}
+
+.gala-hero p {
+  font-size: 17px;
+  line-height: 1.65;
+  color: var(--cream-muted);
+  max-width: 620px;
+  margin: 0 auto 34px;
+}
+
+.gala-chips {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.gala-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--blue-card);
+  border: 1px solid var(--cream-faint);
+  border-radius: 100px;
+  padding: 10px 18px;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--cream);
+}
+
+.gala-chip .chip-icon {
+  width: 16px;
+  height: 16px;
+  color: var(--gold);
+  flex-shrink: 0;
+}
+
+/* Save your spot card */
+.spot-section {
+  padding: 20px 0 80px;
+  display: flex;
+  justify-content: center;
+}
+
+.spot-card {
+  background: var(--blue-card);
+  border: 1px solid var(--cream-faint);
+  border-radius: 22px;
+  padding: 40px;
+  max-width: 460px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 14px 0 rgba(10,20,50,0.25);
+}
+
+.spot-card h3 {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.spot-card p {
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: var(--cream-muted);
+  margin-bottom: 26px;
+}
+
+.spot-label {
+  display: block;
+  text-align: left;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--cream-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 8px;
+}
+
+.spot-input {
+  width: 100%;
+  background: var(--blue-deep);
+  border: 1px solid var(--cream-faint);
+  border-radius: 12px;
+  padding: 14px 16px;
+  color: var(--cream);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 15px;
+  margin-bottom: 18px;
+}
+
+.spot-input::placeholder { color: rgba(246,241,231,0.35); }
+
+.spot-btn {
+  width: 100%;
+  background: var(--gold);
+  color: var(--blue-deep);
+  border: none;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 800;
+  font-size: 15px;
+  padding: 15px 20px;
+  border-radius: 12px;
+  cursor: pointer;
+  box-shadow: 0 4px 0 #C9910F;
+  margin-bottom: 16px;
+}
+
+.spot-note {
+  font-size: 12.5px;
+  color: var(--cream-muted);
+  font-weight: 500;
+}
+
+/* Gala how-it-works step cards */
+.gala-step-card {
+  background: var(--blue-card);
+  border: 1px solid var(--cream-faint);
+  border-radius: 20px;
+  padding: 30px 26px;
+  text-align: left;
+}
+
+.gala-steps-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.gala-step-card .step-number {
+  margin-bottom: 16px;
+}
+
+.gala-step-card h3 {
+  font-size: 19px;
+  margin-bottom: 8px;
+}
+
+.gala-step-card p {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--cream-muted);
+}
+
+/* Reassurance strip */
+.reassure-section {
+  padding: 10px 0 90px;
+}
+
+.reassure-card {
+  max-width: 780px;
+  margin: 0 auto;
+  text-align: center;
+  padding: 28px 32px;
+  border: 1px dashed var(--cream-faint);
+  border-radius: 18px;
+}
+
+.reassure-card p {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--cream-muted);
+}
+
+.reassure-card strong {
+  color: var(--cream);
+}
+
+/* Gala dashboard + room pages */
+.gala-dashboard-main { max-width: 800px; margin: 0 auto; padding: 40px 24px; }
+.gala-dashboard-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; }
+.gala-create-form-container { margin-bottom: 32px; padding: 24px; }
+.gala-create-form { display: flex; flex-direction: column; gap: 16px; margin-top: 16px; }
+.gala-create-actions { display: flex; gap: 12px; justify-content: flex-end; margin-top: 16px; }
+.gala-list { display: flex; flex-direction: column; gap: 16px; }
+.gala-card { display: block; text-decoration: none; color: inherit; padding: 20px; transition: transform 0.2s, background 0.2s; }
+.gala-card:hover { transform: translateY(-2px); background: rgba(255,255,255,0.04); }
+.gala-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.gala-card-title { margin: 0; font-size: 20px; color: var(--gold); font-family: 'Baloo 2'; }
+.gala-status-badge { font-size: 12px; padding: 4px 12px; border-radius: 100px; font-weight: bold; }
+.gala-status-badge.confirmed { background: rgba(255,198,75,0.15); color: var(--gold); }
+.gala-status-badge.pending { background: rgba(255,255,255,0.1); color: var(--cream); }
+.gala-room-main { max-width: 1000px; margin: 0 auto; padding: 40px 24px; }
+.gala-room-header { text-align: center; margin-bottom: 32px; padding: 32px; }
+.gala-room-meta { display: flex; justify-content: center; gap: 16px; align-items: center; margin-top: 12px; color: var(--cream-muted); }
+.gala-tabs { display: flex; gap: 8px; justify-content: center; margin-bottom: 32px; }
+.gala-tab-content { background: var(--blue-card); padding: 32px; border-radius: 24px; }
+.weekly-grid { display: grid; grid-template-columns: 54px repeat(7, minmax(58px, 1fr)); }
+.gala-exception-item { display: flex; justify-content: space-between; align-items: center; padding: 16px; background: rgba(255,255,255,0.02); border-radius: 12px; margin-bottom: 12px; }
+
+/* Gala responsive */
+@media (max-width: 860px) {
+  .gala-steps-grid { grid-template-columns: 1fr; }
+  .gala-hero h1 { font-size: 32px; }
 }
