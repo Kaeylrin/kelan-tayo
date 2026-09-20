@@ -21,14 +21,15 @@ export function Navbar({ isLandingPage = false, isRoomPage = false, activeTab, s
   const navigate = useNavigate();
 
   useEffect(() => {
+    if (!isLandingPage) return; // Only apply shrinking pill behavior on the landing page
     const onScroll = () => setScrolled(window.scrollY > 80);
     window.addEventListener('scroll', onScroll, { passive: true });
     onScroll();
     return () => window.removeEventListener('scroll', onScroll);
-  }, []);
+  }, [isLandingPage]);
 
   return (
-    <div className={`floating-nav-wrapper ${scrolled ? 'scrolled' : ''}`}>
+    <div className={`floating-nav-wrapper ${scrolled ? 'scrolled' : ''} ${!isLandingPage ? 'relative-nav' : ''}`}>
       <nav className="floating-navbar" aria-label="Main Navigation">
         {/* Logo — always links to / */}
         <div

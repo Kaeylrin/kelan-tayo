@@ -29,7 +29,7 @@ export function MarketingLandingPage() {
     <div className="landing-page">
       {/* Fixed nav that becomes a floating pill on scroll */}
       <Navbar isLandingPage={true} />
-      <div className="nav-spacer" />
+      
 
       {/* Content container — matches reference HTML <main> */}
       <main className="landing-main">
@@ -52,3 +52,4 @@ export function MarketingLandingPage() {
     </div>
   );
 }
+

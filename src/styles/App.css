@@ -98,9 +98,7 @@ body {
 .floating-nav-wrapper.scrolled .floating-navbar {
   max-width: 720px;
   padding: 12px 20px;
-  background: rgba(20, 44, 104, 0.82);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background: rgba(20, 44, 104, 0.95);
   box-shadow: 0 12px 30px rgba(8, 18, 46, 0.35);
   border: 1px solid var(--cream-faint);
 }
@@ -110,14 +108,12 @@ body {
 }
 
 .floating-nav-wrapper.scrolled .nav-cta {
-  margin-bottom: 4px;
   padding: 7px 16px;
   font-size: 13px;
 }
 
 /* "Create a plan" CTA button in the landing page nav */
 .nav-cta {
-  margin-bottom: 4px;
   background: var(--gold);
   color: var(--blue-deep);
   border: none;
@@ -1537,209 +1533,13 @@ footer {
 /* ---------- Landing page root wrapper ---------- */
 .landing-page {
   display: flex;
-  line-height: 1.55;
-  margin-top: 10px;
-}
-
-.legal-body ul {
-  padding-left: 18px;
-  margin-top: 8px;
-}
-
-.legal-body li {
-  margin-bottom: 6px;
-}
-
-.modal-icon {
-  width: 46px;
-  height: 46px;
-  background: var(--gold);
-  color: var(--blue-deep);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 24px;
-  font-weight: 800;
-  margin: 0 auto 12px;
-}
-
-.modal-title {
-  font-size: 24px;
-  margin-bottom: 6px;
-}
-
-.modal-text {
-  font-size: 14px;
-  color: var(--cream-muted);
-  margin-bottom: 18px;
-}
-
-/* ---------- Footer ---------- */
-footer {
-  border-top: 1px solid var(--cream-faint);
-  padding: 24px;
-  margin-top: auto;
-  background: rgba(20, 44, 104, 0.4);
-}
-
-.footer-inner {
-  max-width: 1140px;
-  margin: 0 auto;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 12px;
-}
-
-.footer-links {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.footer-links button {
-  color: var(--cream-muted);
-  background: none;
-  border: none;
-  font-family: inherit;
-  font-size: inherit;
-  font-weight: inherit;
-  cursor: pointer;
-  padding: 0;
-}
-
-.footer-links button:hover {
-  color: var(--cream);
-  text-decoration: underline;
-}
-
-.footer-version {
-  color: var(--cream-muted);
-  font-size: 11px;
-  font-weight: 600;
-  padding: 2px 8px;
-  border: 1px solid var(--cream-faint);
-  border-radius: 100px;
-}
-
-.footer-copy {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  color: var(--cream-muted);
-  font-weight: 500;
-}
-
-.heart-icon {
-  width: 13px;
-  height: 13px;
-  color: var(--cream-muted);
-  flex-shrink: 0;
-}
-
-/* Responsive Queries */
-@media (max-width: 900px) {
-  .landing-grid-layout {
-    grid-template-columns: 1fr;
-    gap: 20px;
-    min-height: auto;
-  }
-  .dash-grid {
-    grid-template-columns: 1fr;
-  }
-  .mark-header-panel,
-  .mark-controls-panel {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 14px;
-  }
-  .share-link-box {
-    min-width: 100%;
-  }
-  .name-and-shortcuts,
-  .schedule-summary-action {
-    padding-top: 0;
-    width: 100%;
-    justify-content: space-between;
-  }
-  .name-input-wrapper {
-    width: 100%;
-  }
-  .floating-nav-wrapper {
-    padding: 20px 16px;
-    height: auto;
-  }
-  .floating-navbar {
-    padding: 8px 14px;
-    flex-direction: column;
-    gap: 8px;
-    border-radius: 16px;
-  }
-  .tabs {
-    width: 100%;
-    justify-content: space-between;
-  }
-  .tab-btn {
-    flex: 1;
-    text-align: center;
-    padding: 6px;
-    font-size: 12px;
-  }
-}
-
-@media (max-width: 640px) {
-  .hero h1 {
-    font-size: 28px;
-  }
-  .date-range-row {
-    flex-direction: column;
-    gap: 0;
-  }
-  .date-range-field input.field {
-    margin-bottom: 12px;
-  }
-  .name-and-shortcuts {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  .preset-quick-actions {
-    padding-top: 0;
-  }
-  .schedule-summary-action {
-    flex-direction: column;
-    align-items: stretch;
-    padding-top: 0;
-  }
-  .btn-save-schedule {
-    width: 100%;
-  }
-}
-
-
-.avail-grid .cell { touch-action: none; }
-
-/* ============================================================
-   MARKETING LANDING PAGE
-   All styles for: LandingNavbar, HeroSection, StatsSection,
-   HowItWorksSection, WhyIBuiltSection
-   ============================================================ */
-
-/* ---------- Landing page root wrapper ---------- */
-.landing-page {
-  display: flex;
   flex-direction: column;
   min-height: 100vh;
 }
 
 .landing-main {
-  margin-top: 120px;
   max-width: 1140px;
-  margin: 120px auto 0 auto;
+  margin: 0 auto;
   padding: 0 40px;
   flex: 1;
 }
@@ -1791,7 +1591,6 @@ footer {
 }
 
 .landing-nav.nav-scrolled .nav-cta {
-  margin-bottom: 4px;
   padding: 9px 18px;
   font-size: 13px;
 }
@@ -1819,7 +1618,6 @@ footer {
 
 /* Nav CTA pill */
 .nav-cta {
-  margin-bottom: 4px;
   background: var(--gold);
   color: var(--blue-deep);
   border: none;
@@ -2127,7 +1925,6 @@ footer {
   }
 
   .landing-main {
-    margin-top: 120px;
     padding: 0 20px;
   }
 
@@ -2265,8 +2062,7 @@ footer {
 }
 
 .landing-nav-wrapper.scrolled .logo { font-size: 21px; }
-.landing-nav-wrapper.scrolled .nav-cta {
-  margin-bottom: 4px; padding: 9px 18px; font-size: 13px; }
+.landing-nav-wrapper.scrolled .nav-cta { padding: 9px 18px; font-size: 13px; }
 
 .landing-nav-wrapper.scrolled .floating-navbar {
   margin: 18px auto 0 auto !important;
@@ -2279,25 +2075,53 @@ footer {
 }
 
 
+/* --- LATEST FIXES --- */
 
+/* 1. Blur back to scrolled navbar */
+.floating-nav-wrapper.scrolled .floating-navbar {
+  background: rgba(20, 44, 104, 0.82) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+}
 
+/* 2. Increase breathing space */
+.landing-main {
+  margin-top: 120px !important;
+}
 
+/* 3. Hero buttons exact styles */
+.hero-ctas .btn-primary, .hero-ctas .btn-secondary {
+  height: 48px !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  line-height: 1 !important;
+  padding: 0 26px !important;
+  width: max-content !important;
+}
 .hero-ctas a {
   text-decoration: none !important;
 }
 .hero-ctas .btn-primary {
-  padding: 15px 26px !important;
-  font-size: 15px !important;
-  border-radius: 12px !important;
   box-shadow: 0 4px 0 #C9910F !important;
+  border: none !important;
+  background: var(--gold) !important;
+  color: var(--blue-deep) !important;
+  margin-bottom: 4px !important;
 }
 .hero-ctas .btn-secondary {
-  padding: 15px 26px !important;
-  font-size: 15px !important;
-  border-radius: 12px !important;
-}
-.floating-nav-wrapper.scrolled .nav-cta {
-  margin-bottom: 4px;
-  margin-bottom: 4px; /* offset the box shadow for visual symmetry */
+  border: 1px solid var(--cream-faint) !important;
+  background: transparent !important;
+  color: var(--cream) !important;
 }
 
+/* 4. Navbar button vertical alignment */
+.nav-cta {
+  margin-bottom: 4px !important;
+}
+
+/* 5. Make navbar relative on internal pages so it doesn't overlap dashboard */
+.floating-nav-wrapper.relative-nav {
+  position: relative !important;
+}
