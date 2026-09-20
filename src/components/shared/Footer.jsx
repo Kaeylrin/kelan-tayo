@@ -1,10 +1,12 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 export function Footer({ onOpenLegal }) {
   return (
     <footer>
       <div className="footer-inner">
         <div className="footer-links">
+          <Link to="/gala" style={{ background: 'none', border: 'none', color: 'var(--cream)', textDecoration: 'none', fontSize: '13px', cursor: 'pointer', padding: 0 }}>Regular Gala</Link>
           <button type="button" onClick={() => onOpenLegal('privacy')}>Privacy</button>
           <button type="button" onClick={() => onOpenLegal('terms')}>Terms</button>
           <span className="footer-version">v1.2.1</span>

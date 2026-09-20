@@ -44,9 +44,25 @@ export function Navbar({ isLandingPage = false, isRoomPage = false, activeTab, s
 
         {/* Right side: CTA on landing, tabs on room, nothing on /create */}
         {isLandingPage && (
-          <Link to="/create" className="nav-cta">
-            Create a plan
-          </Link>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
+            <Link 
+              to="/gala" 
+              style={{ 
+                color: 'var(--cream)', 
+                textDecoration: 'none', 
+                fontSize: '14px', 
+                fontWeight: '600',
+                transition: 'opacity 0.2s',
+              }}
+              onMouseOver={(e) => e.target.style.opacity = '0.7'}
+              onMouseOut={(e) => e.target.style.opacity = '1'}
+            >
+              Regular Gala
+            </Link>
+            <Link to="/create" className="nav-cta">
+              Create a plan
+            </Link>
+          </div>
         )}
 
         {isRoomPage && (
