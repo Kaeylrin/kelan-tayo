@@ -8,9 +8,9 @@ export default function PrivacyPage() {
   }, []);
 
   return (
-    <div className="landing-grid-layout" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+    <>
       <Navbar />
-      <div style={{ flex: 1, marginTop: '120px', padding: '0 20px 60px' }}>
+      <main style={{ marginTop: '160px', padding: '0 20px 60px' }}>
         <div style={{ maxWidth: '800px', margin: '0 auto', textAlign: 'left', background: 'var(--card-bg)', padding: '40px', borderRadius: '16px', border: '1px solid rgba(255, 255, 255, 0.05)' }}>
           <h1 className="display" style={{ marginBottom: '8px', color: 'var(--cream)' }}>Privacy Policy</h1>
           <p style={{ color: 'var(--cream-muted)', marginBottom: '32px' }}>Last updated: September 20, 2026 &middot; Version 1.3.2</p>
@@ -74,8 +74,8 @@ export default function PrivacyPage() {
           <h3 style={{ marginTop: '32px', marginBottom: '12px', color: 'var(--gold)', fontSize: '1.2rem' }}>12. Contact</h3>
           <p style={{ marginBottom: '16px', lineHeight: '1.6' }}>Questions about this policy, or a request to remove room, gala, or profile data, can be sent to the app's creator, Wrenier, through the contact details provided with the app.</p>
         </div>
-      </div>
+      </main>
       <Footer />
-    </div>
+    </>
   );
 }

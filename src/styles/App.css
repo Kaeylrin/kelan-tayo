@@ -1,4 +1,4 @@
-﻿:root {
+:root {
   --blue: #1B3A87;
   --blue-deep: #142C68;
   --blue-card: #1F4299;
@@ -2392,7 +2392,7 @@ a.gala-badge:hover {
 /* ---------- Changelog Page ---------- */
 .changelog-main {
   max-width: 900px;
-  margin: 120px auto 80px auto;
+  margin: 160px auto 80px auto;
   padding: 0 24px;
 }
 

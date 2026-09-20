@@ -12,7 +12,10 @@ export function ChangelogPage() {
       <Navbar isLandingPage={false} isRoomPage={false} />
       <main className="changelog-main">
         <div className="changelog-header">
-          <h1>Kelan Tayo updates</h1>
+          <h1>
+            <span style={{ color: 'white' }}>Kelan</span>
+            <span style={{ color: 'var(--gold)' }}>Tayo</span> Updates
+          </h1>
           <p>New features and bug fixes, listed by version with the most recent notes first.</p>
         </div>
 

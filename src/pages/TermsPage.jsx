@@ -8,9 +8,9 @@ export default function TermsPage() {
   }, []);
 
   return (
-    <div className="landing-grid-layout" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+    <>
       <Navbar />
-      <div style={{ flex: 1, marginTop: '120px', padding: '0 20px 60px' }}>
+      <main style={{ marginTop: '160px', padding: '0 20px 60px' }}>
         <div style={{ maxWidth: '800px', margin: '0 auto', textAlign: 'left', background: 'var(--card-bg)', padding: '40px', borderRadius: '16px', border: '1px solid rgba(255, 255, 255, 0.05)' }}>
           <h1 className="display" style={{ marginBottom: '8px', color: 'var(--cream)' }}>Terms of Service</h1>
           <p style={{ color: 'var(--cream-muted)', marginBottom: '32px' }}>Last updated: September 20, 2026 &middot; Version 1.3.2</p>
@@ -61,8 +61,8 @@ export default function TermsPage() {
           <h3 style={{ marginTop: '32px', marginBottom: '12px', color: 'var(--gold)', fontSize: '1.2rem' }}>13. Changes to These Terms</h3>
           <p style={{ marginBottom: '16px', lineHeight: '1.6' }}>These terms may be updated as the app changes. The version number and last updated date at the top of this document reflect the most current version. Continued use of Kelan Tayo after changes are posted means you accept the updated terms. A summary of major updates is available on the app's changelog page.</p>
         </div>
-      </div>
+      </main>
       <Footer />
-    </div>
+    </>
   );
 }
