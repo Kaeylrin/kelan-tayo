@@ -17,11 +17,36 @@ export function ChangelogPage() {
         </div>
 
         <div className="changelog-list">
+          {/* Version 1.3.1 */}
+          <div className="changelog-item">
+            <div className="changelog-meta">
+              <h2>v1.3.1</h2>
+              <span className="changelog-date">September 20, 2026</span>
+            </div>
+            <div className="changelog-content">
+              <div className="changelog-group">
+                <span className="badge changed">CHANGED</span>
+                <ul>
+                  <li>Completely refactored the Regular Gala landing page to match the side-by-side grid layout of the Create page.</li>
+                  <li>Clicking the logo inside the Regular Gala page now securely routes back to the main homepage.</li>
+                  <li>Moved the Changelog link to be a dedicated button in the footer for better visibility.</li>
+                </ul>
+              </div>
+              <div className="changelog-group">
+                <span className="badge fixed">FIXED</span>
+                <ul>
+                  <li>Fixed a flex layout bug that caused the "for the plans you make every week" pill to stretch across the entire screen.</li>
+                  <li>Fixed a page transition wrapper bug that prevented the footer from sticking to the bottom on short pages.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
           {/* Version 1.3.0 */}
           <div className="changelog-item">
             <div className="changelog-meta">
               <h2>v1.3.0</h2>
-              <span className="changelog-date">2026-09-20</span>
+              <span className="changelog-date">September 20, 2026</span>
             </div>
             <div className="changelog-content">
               <div className="changelog-group">
@@ -30,7 +55,7 @@ export function ChangelogPage() {
                   <li><strong>Regular Gala updates:</strong> Introduced the Regular Gala landing page and magic link email flows.</li>
                   <li><strong>Context-aware navigation:</strong> The navbar now smartly hides links to the page you are currently on.</li>
                   <li><strong>Smooth Page Transitions:</strong> Navigating between pages now fades smoothly instead of jumping.</li>
-                  <li><strong>Changelog page:</strong> You're looking at it! A new timeline to track updates to Kelan Tayo.</li>
+                  <li><strong>Changelog page:</strong> A new timeline to track updates to Kelan Tayo.</li>
                 </ul>
               </div>
               <div className="changelog-group">
@@ -45,7 +70,7 @@ export function ChangelogPage() {
               <div className="changelog-group">
                 <span className="badge fixed">FIXED</span>
                 <ul>
-                  <li>Fixed an issue where database spambots were artificially inflating the live stats count on the landing page.</li>
+                  <li>Implemented aggressive filtering on the live stats to ignore automated database spam and only show genuine usage numbers.</li>
                   <li>Resolved CSS layout glitches where floating navbars would overlap content on smaller screens.</li>
                 </ul>
               </div>
@@ -56,7 +81,7 @@ export function ChangelogPage() {
           <div className="changelog-item">
             <div className="changelog-meta">
               <h2>v1.2.1</h2>
-              <span className="changelog-date">2026-09-19</span>
+              <span className="changelog-date">September 19, 2026</span>
             </div>
             <div className="changelog-content">
               <div className="changelog-group">
@@ -80,7 +105,7 @@ export function ChangelogPage() {
           <div className="changelog-item">
             <div className="changelog-meta">
               <h2>v1.0.12</h2>
-              <span className="changelog-date">2026-09-15</span>
+              <span className="changelog-date">September 15, 2026</span>
             </div>
             <div className="changelog-content">
               <div className="changelog-group">
@@ -99,7 +124,7 @@ export function ChangelogPage() {
           <div className="changelog-item">
             <div className="changelog-meta">
               <h2>v1.0.0</h2>
-              <span className="changelog-date">2026-08-30</span>
+              <span className="changelog-date">August 30, 2026</span>
             </div>
             <div className="changelog-content">
               <div className="changelog-group">

@@ -2522,3 +2522,18 @@ a.gala-badge:hover {
   display: flex;
   flex-direction: column;
 }
+.footer-links .footer-link {
+  color: var(--cream-muted);
+  background: none;
+  border: none;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: none;
+}
+.footer-links .footer-link:hover {
+  color: var(--cream);
+  text-decoration: underline;
+}
