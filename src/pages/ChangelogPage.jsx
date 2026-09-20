@@ -124,7 +124,7 @@ export function ChangelogPage() {
           <div className="changelog-item">
             <div className="changelog-meta">
               <h2>v1.0.0</h2>
-              <span className="changelog-date">August 30, 2026</span>
+              <span className="changelog-date">September 10, 2026</span>
             </div>
             <div className="changelog-content">
               <div className="changelog-group">
