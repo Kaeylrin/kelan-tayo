@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { GalaNavbar } from '../components/gala/GalaNavbar.jsx';
 import { Footer } from '../components/shared/Footer.jsx';
-import { LegalModal } from '../components/shared/Modals.jsx';
 import { sendMagicLink, getSession } from '../services/authService.js';
 
 export function GalaLandingPage() {
@@ -11,7 +10,6 @@ export function GalaLandingPage() {
   const [honeypot, setHoneypot] = useState('');
   const [status, setStatus] = useState('idle');
   const [errorMsg, setErrorMsg] = useState('');
-  const [legalModalType, setLegalModalType] = useState(null);
 
   useEffect(() => {
     getSession().then((session) => {
@@ -155,9 +153,9 @@ export function GalaLandingPage() {
         </section>
       </main>
 
-      <LegalModal type={legalModalType} onClose={() => setLegalModalType(null)} />
-      <Footer onOpenLegal={(type) => setLegalModalType(type)} />
+      <Footer />
     </>
   );
 }
+
 

@@ -10,6 +10,8 @@ import { GalaCallbackPage } from './pages/GalaCallbackPage.jsx';
 import { GalaDashboardPage } from './pages/GalaDashboardPage.jsx';
 import { GalaRoomPage } from './pages/GalaRoomPage.jsx';
 import { ChangelogPage } from './pages/ChangelogPage.jsx';
+import PrivacyPage from './pages/PrivacyPage.jsx';
+import TermsPage from './pages/TermsPage.jsx';
 
 import './styles/App.css';
 
@@ -39,6 +41,8 @@ function AnimatedRoutes() {
         <Route path="/gala/dashboard" element={<GalaDashboardPage />} />
         <Route path="/gala/:galaId" element={<GalaRoomPage />} />
         <Route path="/changelog" element={<ChangelogPage />} />
+        <Route path="/privacy" element={<PrivacyPage />} />
+        <Route path="/terms" element={<TermsPage />} />
       </Routes>
     </div>
   );

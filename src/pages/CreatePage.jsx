@@ -4,7 +4,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Navbar } from '../components/shared/Navbar.jsx';
 import { CreateView } from '../components/shared/CreateView.jsx';
 import { Footer } from '../components/shared/Footer.jsx';
-import { LegalModal } from '../components/shared/Modals.jsx';
 
 import { LAST_ROOM_KEY, LAST_USER_KEY } from '../constants/config.js';
 import { formatDateISO } from '../utils/storage.js';
@@ -25,7 +24,6 @@ export function CreatePage() {
   const [preferredEnd, setPreferredEnd] = useState('22:00');
   const [toastMessage, setToastMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [legalModalType, setLegalModalType] = useState(null);
   const [honeypot, setHoneypot] = useState('');
 
   const showToast = (msg) => {
@@ -154,8 +152,8 @@ export function CreatePage() {
           setHoneypot={setHoneypot}
         />
       </main>
-      <LegalModal type={legalModalType} onClose={() => setLegalModalType(null)} />
-      <Footer onOpenLegal={(type) => setLegalModalType(type)} />
+      <Footer />
     </>
   );
 }
+

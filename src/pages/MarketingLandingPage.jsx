@@ -9,7 +9,6 @@ import { WhyIBuiltSection }   from '../components/landing/WhyIBuiltSection.jsx';
 // Shared shell components
 import { Navbar }             from '../components/shared/Navbar.jsx';
 import { Footer }             from '../components/shared/Footer.jsx';
-import { LegalModal }         from '../components/shared/Modals.jsx';
 
 /**
  * MarketingLandingPage — the public-facing / route.
@@ -23,7 +22,6 @@ import { LegalModal }         from '../components/shared/Modals.jsx';
  *   Footer + LegalModal
  */
 export function MarketingLandingPage() {
-  const [legalModalType, setLegalModalType] = useState(null);
 
   return (
     <div className="landing-page">
@@ -40,16 +38,9 @@ export function MarketingLandingPage() {
       </main>
 
       {/* Footer with legal modal trigger */}
-      <Footer onOpenLegal={setLegalModalType} />
-
-      {/* Legal modal (Privacy / Terms) */}
-      {legalModalType && (
-        <LegalModal
-          type={legalModalType}
-          onClose={() => setLegalModalType(null)}
-        />
-      )}
+      <Footer />
     </div>
   );
 }
+
 

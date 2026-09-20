@@ -4,7 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Navbar } from '../components/shared/Navbar.jsx';
 import { MarkScheduleView } from '../components/room/MarkScheduleView.jsx';
 import { DashboardView } from '../components/room/DashboardView.jsx';
-import { ConfirmDateModal, LegalModal } from '../components/shared/Modals.jsx';
+import { ConfirmDateModal } from '../components/shared/Modals.jsx';
 import { Footer } from '../components/shared/Footer.jsx';
 
 import { LAST_ROOM_KEY, LAST_USER_KEY } from '../constants/config.js';
@@ -27,7 +27,6 @@ export function RoomPage() {
   const [toastMessage, setToastMessage] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [confirmModalData, setConfirmModalData] = useState(null);
-  const [legalModalType, setLegalModalType] = useState(null);
 
   const showToast = (msg) => {
     setToastMessage(msg);
@@ -259,8 +258,8 @@ export function RoomPage() {
         />
       )}
 
-      <LegalModal type={legalModalType} onClose={() => setLegalModalType(null)} />
-      <Footer onOpenLegal={(type) => setLegalModalType(type)} />
+      <Footer />
     </>
   );
 }
+

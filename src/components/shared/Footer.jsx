@@ -1,14 +1,14 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-export function Footer({ onOpenLegal }) {
+export function Footer() {
   return (
     <footer>
       <div className="footer-inner">
         <div className="footer-links">
           <Link to="/changelog" className="footer-link">Changelog</Link>
-          <button type="button" onClick={() => onOpenLegal('privacy')}>Privacy</button>
-          <button type="button" onClick={() => onOpenLegal('terms')}>Terms</button>
+          <Link to="/privacy" className="footer-link">Privacy</Link>
+          <Link to="/terms" className="footer-link">Terms</Link>
           <span className="footer-version">v1.3.2</span>
         </div>
         <div className="footer-copy">
