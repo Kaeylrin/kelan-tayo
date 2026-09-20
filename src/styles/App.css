@@ -2516,3 +2516,9 @@ a.gala-badge:hover {
     gap: 24px;
   }
 }
+
+.page-transition {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
