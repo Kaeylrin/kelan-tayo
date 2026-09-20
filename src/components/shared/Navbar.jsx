@@ -22,12 +22,11 @@ export function Navbar({ isLandingPage = false, isRoomPage = false, activeTab, s
   const location = useLocation();
 
   useEffect(() => {
-    if (!isLandingPage) return; // Only apply shrinking pill behavior on the landing page
     const onScroll = () => setScrolled(window.scrollY > 80);
     window.addEventListener('scroll', onScroll, { passive: true });
     onScroll();
     return () => window.removeEventListener('scroll', onScroll);
-  }, [isLandingPage]);
+  }, []);
 
   const handleLogoClick = () => {
     if (location.pathname === '/') {
@@ -42,7 +41,7 @@ export function Navbar({ isLandingPage = false, isRoomPage = false, activeTab, s
   const showNavCtas = isLandingPage || (!isRoomPage);
 
   return (
-    <div className={`floating-nav-wrapper ${scrolled ? 'scrolled' : ''} ${!isLandingPage ? 'relative-nav' : ''}`}>
+    <div className={`floating-nav-wrapper ${scrolled ? 'scrolled' : ''}`}>
       <nav className="floating-navbar" aria-label="Main Navigation">
         {/* Logo — smooth scroll to top on landing, navigate to / elsewhere */}
         <div

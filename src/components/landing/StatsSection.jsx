@@ -14,9 +14,15 @@ export function StatsSection() {
       try {
         const { data } = await supabase.rpc('get_public_stats');
         if (data && data[0]) {
-          setStats(data[0]);
+          // Subtract the recent bot spam attack numbers to show true counts
+          const sanitizedStats = {
+            rooms_created: Math.max(0, data[0].rooms_created - 33150),
+            plans_confirmed: data[0].plans_confirmed,
+            members_joined: Math.max(0, data[0].members_joined - 139950),
+          };
+          setStats(sanitizedStats);
         }
-      } catch (_err) {
+      } catch (err) {
         // Stats are best-effort; silently fail.
       }
     }

@@ -2373,3 +2373,146 @@ a.gala-badge:hover {
 .nav-link-secondary:hover {
   opacity: 0.8;
 }
+.landing-grid-layout { margin-top: 120px; }
+.view-content.room-main { margin-top: 120px; }
+
+/* Page Transitions */
+.page-transition {
+  transition: opacity 150ms ease-in-out, transform 150ms ease-in-out;
+}
+.page-transition.fadeIn {
+  opacity: 1;
+  transform: translateY(0);
+}
+.page-transition.fadeOut {
+  opacity: 0;
+  transform: translateY(4px);
+}
+
+/* ---------- Changelog Page ---------- */
+.changelog-main {
+  max-width: 900px;
+  margin: 120px auto 80px auto;
+  padding: 0 24px;
+}
+
+.changelog-header {
+  text-align: center;
+  margin-bottom: 60px;
+  padding-bottom: 40px;
+  border-bottom: 1px solid var(--cream-faint);
+}
+
+.changelog-header h1 {
+  font-size: 42px;
+  color: var(--cream);
+  margin-bottom: 16px;
+  font-family: 'Baloo 2', sans-serif;
+}
+
+.changelog-header p {
+  font-size: 16px;
+  color: var(--cream-muted);
+  max-width: 500px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+.changelog-list {
+  display: flex;
+  flex-direction: column;
+  gap: 60px;
+}
+
+.changelog-item {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  gap: 40px;
+}
+
+.changelog-meta h2 {
+  font-size: 24px;
+  color: var(--cream);
+  margin-bottom: 4px;
+}
+
+.changelog-date {
+  font-size: 13px;
+  color: var(--cream-muted);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.changelog-content {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.changelog-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.changelog-group .badge {
+  font-size: 11px;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 6px;
+  letter-spacing: 0.05em;
+}
+
+.changelog-group .badge.added {
+  background: rgba(46, 204, 113, 0.15);
+  color: #2ecc71;
+  border: 1px solid rgba(46, 204, 113, 0.3);
+}
+
+.changelog-group .badge.changed {
+  background: rgba(241, 196, 15, 0.15);
+  color: #f1c40f;
+  border: 1px solid rgba(241, 196, 15, 0.3);
+}
+
+.changelog-group .badge.fixed {
+  background: rgba(231, 76, 60, 0.15);
+  color: #e74c3c;
+  border: 1px solid rgba(231, 76, 60, 0.3);
+}
+
+.changelog-group ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.changelog-group li {
+  position: relative;
+  padding-left: 18px;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--cream-muted);
+}
+
+.changelog-group li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: var(--gold);
+}
+
+.changelog-group li strong {
+  color: var(--cream);
+}
+
+@media (max-width: 768px) {
+  .changelog-item {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+}

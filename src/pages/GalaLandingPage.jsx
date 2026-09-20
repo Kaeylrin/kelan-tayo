@@ -46,15 +46,13 @@ export function GalaLandingPage() {
 
       <main>
 
-        {/* ---- Hero ---- */}
-        <section className="gala-hero">
-          <span className="eyebrow">for the plans you make every week</span>
-          <h1 className="display">Same crew. Same vibe. Set it once.</h1>
-          <p>
-            For the badminton group that plays every Saturday, the tambayan crew that meets every
-            Friday, the study group that grinds every week — stop re-planning the same plan.
-            Set your recurring schedule once and Kelan Tayo tracks who's free every week.
-          </p>
+        {/* ---- Hero Section ---- */}
+      <section className="gala-hero" style={{ paddingTop: '160px' }}>
+        <div className="eyebrow">for the plans you make every week</div>
+        <h1>Same crew. Same vibe. Set it once.</h1>
+        <p>
+          For the badminton group that plays every Saturday, the tambayan crew that meets every Friday, the study group that grinds every week, stop re-planning the same plan. Set your recurring schedule once and Kelan Tayo tracks who's free every week.
+        </p>
           <div className="gala-chips">
             <span className="gala-chip">
               <svg className="chip-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
