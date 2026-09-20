@@ -2378,15 +2378,13 @@ a.gala-badge:hover {
 
 /* Page Transitions */
 .page-transition {
-  transition: opacity 150ms ease-in-out, transform 150ms ease-in-out;
+  transition: opacity 150ms ease-in-out;
 }
 .page-transition.fadeIn {
   opacity: 1;
-  transform: translateY(0);
 }
 .page-transition.fadeOut {
   opacity: 0;
-  transform: translateY(4px);
 }
 
 /* ---------- Changelog Page ---------- */
