@@ -6,7 +6,6 @@ export function Footer({ onOpenLegal }) {
     <footer>
       <div className="footer-inner">
         <div className="footer-links">
-          <Link to="/gala" style={{ background: 'none', border: 'none', color: 'var(--cream)', textDecoration: 'none', fontSize: '13px', cursor: 'pointer', padding: 0 }}>Regular Gala</Link>
           <button type="button" onClick={() => onOpenLegal('privacy')}>Privacy</button>
           <button type="button" onClick={() => onOpenLegal('terms')}>Terms</button>
           <Link to="/changelog" className="footer-version" style={{ cursor: 'pointer', textDecoration: 'none' }}>v1.3.0</Link>
