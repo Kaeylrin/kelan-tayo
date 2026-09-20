@@ -40,8 +40,10 @@ export function GalaLandingPage() {
       <main className="landing-main">
         <div className="view-content landing-grid-layout" style={{ marginBottom: '100px' }}>
           
-          <div className="hero" style={{ textAlign: 'left', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-            <span className="eyebrow" style={{ display: 'inline-block', marginBottom: '12px' }}>for the plans you make every week</span>
+          <div className="hero" style={{ textAlign: 'left', marginTop: '20px' }}>
+            <div style={{ marginBottom: '12px' }}>
+              <span className="eyebrow" style={{ display: 'inline-block' }}>for the plans you make every week</span>
+            </div>
             <h1 className="display" style={{ marginBottom: '16px' }}>Same crew. Same vibe. Set it once.</h1>
             <p style={{ marginBottom: '24px' }}>
               For the badminton group that plays every Saturday, the tambayan crew that meets every Friday, the study group that grinds every week, stop re-planning the same plan. Set your recurring schedule once and Kelan Tayo tracks who's free every week.

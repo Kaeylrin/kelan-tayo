@@ -12,11 +12,7 @@ export function GalaNavbar({ rightSlot }) {
   const location = useLocation();
 
   const handleLogoClick = () => {
-    if (location.pathname === '/gala') {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    } else {
-      navigate('/');
-    }
+    navigate('/');
   };
 
   return (
