@@ -1,7 +1,7 @@
 import { supabase } from '../utils/supabaseClient';
 import { generateRoomCode } from '../utils/storage';
 
-export async function createRoom(name, dateFrom, dateTo, preferredStart, preferredEnd) {
+export async function createRoom(name, dateFrom, dateTo, preferredStart, preferredEnd, turnstileToken) {
   const roomCode = generateRoomCode();
   
   const response = await fetch('/api/createRoom', {
@@ -16,7 +16,8 @@ export async function createRoom(name, dateFrom, dateTo, preferredStart, preferr
       dateFrom,
       dateTo,
       preferredStart: preferredStart || null,
-      preferredEnd: preferredEnd || null
+      preferredEnd: preferredEnd || null,
+      turnstileToken
     })
   });
 

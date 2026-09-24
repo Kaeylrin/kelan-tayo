@@ -25,6 +25,30 @@ export default async function handler(req, res) {
     return res.status(403).json({ error: 'Unauthorized request origin' });
   }
 
+  // Verify Turnstile Captcha Token
+  const { turnstileToken } = req.body;
+  if (!turnstileToken) {
+    return res.status(400).json({ error: 'Security validation missing' });
+  }
+
+  const turnstileSecret = process.env.TURNSTILE_SECRET_KEY;
+  if (turnstileSecret) {
+    const formData = new URLSearchParams();
+    formData.append('secret', turnstileSecret);
+    formData.append('response', turnstileToken);
+    formData.append('remoteip', clientIp);
+
+    const cfRes = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+      method: 'POST',
+      body: formData
+    });
+    
+    const cfOutcome = await cfRes.json();
+    if (!cfOutcome.success) {
+      return res.status(403).json({ error: 'Security verification failed' });
+    }
+  }
+
   // Verify honeypot (if somehow they bypassed frontend)
   if (req.body.website) {
     return res.status(200).json({ message: 'Success' }); // Silent rejection

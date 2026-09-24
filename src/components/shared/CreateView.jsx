@@ -1,4 +1,5 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
+import { Turnstile } from '@marsidev/react-turnstile';
 import { formatPrettyDate } from '../../utils/storage.js';
 
 export function CreateView({
@@ -25,7 +26,8 @@ export function CreateView({
   preferredEnd,
   setPreferredEnd,
   honeypot,
-  setHoneypot
+  setHoneypot,
+  setTurnstileToken
 }) {
   const [preferredPreset, setPreferredPreset] = useState('morning');
 
@@ -222,6 +224,14 @@ export function CreateView({
                 </div>
               </div>
             )}
+
+            <div style={{ display: 'none' }}>
+              <Turnstile 
+                siteKey="0x4AAAAAAFCMNSFcIEw0ivSc" 
+                options={{ action: 'submit-form' }}
+                onSuccess={(token) => setTurnstileToken(token)}
+              />
+            </div>
 
             <button className="btn-primary" style={{ marginTop: '12px' }} type="submit">
               Create plan &amp; get link

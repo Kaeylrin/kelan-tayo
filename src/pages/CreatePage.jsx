@@ -25,6 +25,7 @@ export function CreatePage() {
   const [toastMessage, setToastMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [honeypot, setHoneypot] = useState('');
+  const [turnstileToken, setTurnstileToken] = useState(null);
 
   const showToast = (msg) => {
     setToastMessage(msg);
@@ -75,11 +76,12 @@ export function CreatePage() {
   const handleCreatePlan = async (e) => {
     e.preventDefault();
     if (honeypot) return; // Silent rejection for bots
+    if (!turnstileToken) { showToast('Verifying security connection... please wait a second and try again.'); return; }
     if (!userName.trim()) { showToast('Please enter your name!'); return; }
     if (!planName.trim()) { showToast('Please enter a plan name!'); return; }
     setIsLoading(true);
     try {
-      const room = await createRoom(planName.trim(), startDate, endDate, preferredStart || null, preferredEnd || null);
+      const room = await createRoom(planName.trim(), startDate, endDate, preferredStart || null, preferredEnd || null, turnstileToken);
       const member = await joinRoom(room.id, userName.trim());
       const updatedRoom = await updateRoomCreator(room.id, member.id);
 
@@ -150,6 +152,7 @@ export function CreatePage() {
           setPreferredEnd={setPreferredEnd}
           honeypot={honeypot}
           setHoneypot={setHoneypot}
+          setTurnstileToken={setTurnstileToken}
         />
       </main>
       <Footer />
