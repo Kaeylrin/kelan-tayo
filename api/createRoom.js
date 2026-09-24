@@ -19,6 +19,12 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Missing required fields' });
   }
 
+  // Anti-bot: Require a custom client header that simple python scripts won't have
+  const clientHeader = req.headers['x-kelan-tayo-client'];
+  if (clientHeader !== 'v1.3.3') {
+    return res.status(403).json({ error: 'Unauthorized request origin' });
+  }
+
   // Verify honeypot (if somehow they bypassed frontend)
   if (req.body.website) {
     return res.status(200).json({ message: 'Success' }); // Silent rejection

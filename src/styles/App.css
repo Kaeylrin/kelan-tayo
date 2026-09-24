@@ -1476,10 +1476,14 @@ footer {
     height: auto;
   }
   .floating-navbar {
+    padding: 10px 16px;
+    border-radius: 100px;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+  .nav-cta {
     padding: 8px 14px;
-    flex-direction: column;
-    gap: 8px;
-    border-radius: 16px;
+    font-size: 13px;
   }
   .tabs {
     width: 100%;
@@ -2509,6 +2513,7 @@ a.gala-badge:hover {
 }
 
 @media (max-width: 768px) {
+  .hide-mobile { display: none; }
   .changelog-item {
     grid-template-columns: 1fr;
     gap: 24px;
@@ -2535,3 +2540,4 @@ a.gala-badge:hover {
   color: var(--cream);
   text-decoration: underline;
 }
+

@@ -3,7 +3,10 @@ import { supabase } from '../utils/supabaseClient';
 export async function joinRoom(roomId, displayName) {
   const response = await fetch('/api/joinRoom', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 
+      'Content-Type': 'application/json',
+      'x-kelan-tayo-client': 'v1.3.3'
+    },
     body: JSON.stringify({ roomId, displayName })
   });
 

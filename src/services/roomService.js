@@ -6,7 +6,10 @@ export async function createRoom(name, dateFrom, dateTo, preferredStart, preferr
   
   const response = await fetch('/api/createRoom', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 
+      'Content-Type': 'application/json',
+      'x-kelan-tayo-client': 'v1.3.3'
+    },
     body: JSON.stringify({
       roomCode,
       name,

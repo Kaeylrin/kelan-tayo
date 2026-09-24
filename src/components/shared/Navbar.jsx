@@ -59,7 +59,7 @@ export function Navbar({ isLandingPage = false, isRoomPage = false, activeTab, s
           <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
             {location.pathname !== '/gala' && (
               <Link to="/gala" className="nav-link-secondary">
-                Regular Gala
+                <span className="hide-mobile">Regular </span>Gala
               </Link>
             )}
             {location.pathname !== '/create' && (
