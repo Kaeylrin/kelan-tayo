@@ -1,22 +1,22 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { NavMenu } from './NavMenu.jsx';
 
 /**
  * Navbar — Always Pill
  *
  * Props:
- *  isLandingPage  — true on /  → shows "Create a plan" CTA, no tabs
  *  isRoomPage     — true on /room/:code → shows Mark Schedule / Dashboard tabs
  *  activeTab / setActiveTab — only used when isRoomPage=true
- *  currentRoom    — used to show room name badge when in room
- *  onShowToast    — toast callback
  *  onLeaveRoom    — async leave callback (room page only)
+ *
+ * On mobile the links/tabs collapse into a hamburger menu (see NavMenu).
  *
  * Scroll behavior:
  *  scroll = 0   → full-width pill (same as the current app nav)
  *  scroll > 80  → shrinks to centered floating pill (narrower, backdrop blur)
  */
-export function Navbar({ isLandingPage = false, isRoomPage = false, activeTab, setActiveTab, currentRoom, onShowToast, onLeaveRoom }) {
+export function Navbar({ isRoomPage = false, activeTab, setActiveTab, onLeaveRoom }) {
   const [scrolled, setScrolled] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
@@ -37,9 +37,6 @@ export function Navbar({ isLandingPage = false, isRoomPage = false, activeTab, s
     }
   };
 
-  // Show the "Regular Gala" badge + "Create a plan" CTA on both landing and create pages
-  const showNavCtas = isLandingPage || (!isRoomPage);
-
   return (
     <div className={`floating-nav-wrapper ${scrolled ? 'scrolled' : ''}`}>
       <nav className="floating-navbar" aria-label="Main Navigation">
@@ -54,52 +51,53 @@ export function Navbar({ isLandingPage = false, isRoomPage = false, activeTab, s
           kelan<span>tayo</span>
         </div>
 
-        {/* Right side: context-aware links (hide the one you're already on) */}
-        {!isRoomPage && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-            {location.pathname !== '/gala' && (
-              <Link to="/gala" className="nav-link-secondary">
-                <span className="hide-mobile">Regular </span>Gala
-              </Link>
-            )}
-            {location.pathname !== '/create' && (
-              <Link to="/create" className="nav-cta">
-                Create a plan
-              </Link>
-            )}
-          </div>
-        )}
+        <NavMenu>
+          {!isRoomPage && (
+            <>
+              {/* Context-aware links: hide the one you're already on */}
+              {location.pathname !== '/gala' && (
+                <Link to="/gala" className="nav-link-secondary">
+                  Regular Gala
+                </Link>
+              )}
+              {location.pathname !== '/create' && (
+                <Link to="/create" className="nav-cta">
+                  Create a plan
+                </Link>
+              )}
+            </>
+          )}
 
-        {isRoomPage && (
-          <div className="tabs" role="tablist">
-            <button
-              role="tab"
-              aria-selected={activeTab === 'mark'}
-              className={`tab-btn ${activeTab === 'mark' ? 'active' : ''}`}
-              onClick={() => setActiveTab('mark')}
-            >
-              Mark schedule
-            </button>
-            <button
-              role="tab"
-              aria-selected={activeTab === 'dashboard'}
-              className={`tab-btn ${activeTab === 'dashboard' ? 'active' : ''}`}
-              onClick={() => setActiveTab('dashboard')}
-            >
-              Dashboard
-            </button>
-            {onLeaveRoom && (
+          {isRoomPage && (
+            <div className="tabs" role="tablist">
               <button
-                className="tab-btn"
-                onClick={onLeaveRoom}
-                type="button"
-                style={{ color: 'var(--coral)', opacity: 0.8 }}
+                role="tab"
+                aria-selected={activeTab === 'mark'}
+                className={`tab-btn ${activeTab === 'mark' ? 'active' : ''}`}
+                onClick={() => setActiveTab('mark')}
               >
-                Leave
+                Mark schedule
               </button>
-            )}
-          </div>
-        )}
+              <button
+                role="tab"
+                aria-selected={activeTab === 'dashboard'}
+                className={`tab-btn ${activeTab === 'dashboard' ? 'active' : ''}`}
+                onClick={() => setActiveTab('dashboard')}
+              >
+                Dashboard
+              </button>
+              {onLeaveRoom && (
+                <button
+                  className="tab-btn tab-btn-leave"
+                  onClick={onLeaveRoom}
+                  type="button"
+                >
+                  Leave
+                </button>
+              )}
+            </div>
+          )}
+        </NavMenu>
       </nav>
     </div>
   );

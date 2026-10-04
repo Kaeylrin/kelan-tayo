@@ -14,7 +14,7 @@ import { Footer }             from '../components/shared/Footer.jsx';
  * MarketingLandingPage — the public-facing / route.
  *
  * Renders:
- *   Navbar (isLandingPage pill scroll behaviour)
+ *   Navbar (pill scroll behaviour)
  *   HeroSection
  *   StatsSection
  *   HowItWorksSection
@@ -26,7 +26,7 @@ export function MarketingLandingPage() {
   return (
     <div className="landing-page">
       {/* Fixed nav that becomes a floating pill on scroll */}
-      <Navbar isLandingPage={true} />
+      <Navbar />
       
 
       {/* Content container — matches reference HTML <main> */}

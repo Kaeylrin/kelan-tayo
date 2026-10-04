@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { Navbar } from '../components/shared/Navbar.jsx';
 import { CreateView } from '../components/shared/CreateView.jsx';
@@ -8,8 +8,7 @@ import { Footer } from '../components/shared/Footer.jsx';
 import { LAST_ROOM_KEY, LAST_USER_KEY } from '../constants/config.js';
 import { formatDateISO } from '../utils/storage.js';
 
-import { createRoom, getRoomByCode, updateRoomCreator } from '../services/roomService.js';
-import { joinRoom, listMembers } from '../services/memberService.js';
+import { createRoom, getRoomByCode } from '../services/roomService.js';
 
 export function CreatePage() {
   const navigate = useNavigate();
@@ -26,17 +25,11 @@ export function CreatePage() {
   const [isLoading, setIsLoading] = useState(false);
   const [honeypot, setHoneypot] = useState('');
   const [turnstileToken, setTurnstileToken] = useState(null);
+  const turnstileRef = useRef(null);
 
   const showToast = (msg) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(''), 2800);
-  };
-
-  const getDeviceMemberId = (roomId) => {
-    try {
-      const memory = JSON.parse(localStorage.getItem('kelan_memberships') || '{}');
-      return memory[roomId] || null;
-    } catch { return null; }
   };
 
   const saveDeviceMemberId = (roomId, memberId) => {
@@ -44,7 +37,7 @@ export function CreatePage() {
       const memory = JSON.parse(localStorage.getItem('kelan_memberships') || '{}');
       memory[roomId] = memberId;
       localStorage.setItem('kelan_memberships', JSON.stringify(memory));
-    } catch {}
+    } catch { /* storage unavailable */ }
   };
 
   useEffect(() => {
@@ -81,20 +74,29 @@ export function CreatePage() {
     if (!planName.trim()) { showToast('Please enter a plan name!'); return; }
     setIsLoading(true);
     try {
-      const room = await createRoom(planName.trim(), startDate, endDate, preferredStart || null, preferredEnd || null, turnstileToken);
-      const member = await joinRoom(room.id, userName.trim());
-      const updatedRoom = await updateRoomCreator(room.id, member.id);
+      const { room, member } = await createRoom({
+        name: planName.trim(),
+        creatorName: userName.trim(),
+        dateFrom: startDate,
+        dateTo: endDate,
+        preferredStart,
+        preferredEnd,
+        turnstileToken,
+      });
 
       saveDeviceMemberId(room.id, member.id);
       localStorage.setItem(LAST_USER_KEY, userName.trim());
-      localStorage.setItem(LAST_ROOM_KEY, updatedRoom.room_code);
+      localStorage.setItem(LAST_ROOM_KEY, room.room_code);
 
-      showToast(`Plan created! Room code: ${updatedRoom.room_code}`);
-      setTimeout(() => navigate(`/room/${updatedRoom.room_code}`), 350);
+      showToast(`Plan created! Room code: ${room.room_code}`);
+      setTimeout(() => navigate(`/room/${room.room_code}`), 350);
     } catch (err) {
-      console.error('Supabase Error:', err);
+      console.error('Create plan failed:', err);
       showToast(`Error: ${err.message || 'Check console for details'}`);
     } finally {
+      // Turnstile tokens are single-use; get a fresh one for any retry.
+      setTurnstileToken(null);
+      turnstileRef.current?.reset();
       setIsLoading(false);
     }
   };
@@ -113,7 +115,7 @@ export function CreatePage() {
       } else {
         showToast('Room not found or link is invalid.');
       }
-    } catch (err) {
+    } catch {
       showToast('Error loading room.');
     } finally {
       setIsLoading(false);
@@ -122,7 +124,7 @@ export function CreatePage() {
 
   return (
     <>
-      <Navbar isLandingPage={false} isRoomPage={false} />
+      <Navbar />
       {toastMessage && <div className="toast">{toastMessage}</div>}
       {isLoading && (
         <div className="loading-overlay">
@@ -153,6 +155,7 @@ export function CreatePage() {
           honeypot={honeypot}
           setHoneypot={setHoneypot}
           setTurnstileToken={setTurnstileToken}
+          turnstileRef={turnstileRef}
         />
       </main>
       <Footer />

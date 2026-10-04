@@ -1,44 +1,17 @@
 import { supabase } from '../utils/supabaseClient';
-import { generateRoomCode } from '../utils/storage';
+import { postApi } from './apiClient';
 
-export async function createRoom(name, dateFrom, dateTo, preferredStart, preferredEnd, turnstileToken) {
-  const roomCode = generateRoomCode();
-  
-  const response = await fetch('/api/createRoom', {
-    method: 'POST',
-    headers: { 
-      'Content-Type': 'application/json',
-      'x-kelan-tayo-client': 'v1.3.3'
-    },
-    body: JSON.stringify({
-      roomCode,
-      name,
-      dateFrom,
-      dateTo,
-      preferredStart: preferredStart || null,
-      preferredEnd: preferredEnd || null,
-      turnstileToken
-    })
+/** Creates a room and its creator member. Returns { room, member }. */
+export function createRoom({ name, creatorName, dateFrom, dateTo, preferredStart, preferredEnd, turnstileToken }) {
+  return postApi('createRoom', {
+    name,
+    creatorName,
+    dateFrom,
+    dateTo,
+    preferredStart: preferredStart || null,
+    preferredEnd: preferredEnd || null,
+    turnstileToken,
   });
-
-  if (!response.ok) {
-    const err = await response.json().catch(() => ({}));
-    throw new Error(err.error || 'Failed to create room via secure API');
-  }
-
-  return response.json();
-}
-
-export async function updateRoomCreator(roomId, memberId) {
-  const { data, error } = await supabase
-    .from('rooms')
-    .update({ creator_member_id: memberId })
-    .eq('id', roomId)
-    .select()
-    .single();
-
-  if (error) throw error;
-  return data;
 }
 
 export async function getRoomByCode(roomCode) {
@@ -52,40 +25,10 @@ export async function getRoomByCode(roomCode) {
   return data;
 }
 
-export async function confirmRoom(roomId, requestingMemberId, date, start, end) {
-  const { data, error } = await supabase
-    .from('rooms')
-    .update({
-      status: 'confirmed',
-      confirmed_date: date,
-      confirmed_start: start,
-      confirmed_end: end,
-      confirmed_at: new Date().toISOString()
-    })
-    .eq('id', roomId)
-    .eq('creator_member_id', requestingMemberId) // Extra security check
-    .select()
-    .single();
-
-  if (error) throw error;
-  return data;
+export function confirmRoom(roomId, requestingMemberId, date, start, end) {
+  return postApi('roomAction', { action: 'confirm', roomId, memberId: requestingMemberId, date, start, end });
 }
 
-export async function unlockRoom(roomId, requestingMemberId) {
-  const { data, error } = await supabase
-    .from('rooms')
-    .update({
-      status: 'open',
-      confirmed_date: null,
-      confirmed_start: null,
-      confirmed_end: null,
-      confirmed_at: null
-    })
-    .eq('id', roomId)
-    .eq('creator_member_id', requestingMemberId) // Extra security check
-    .select()
-    .single();
-
-  if (error) throw error;
-  return data;
+export function unlockRoom(roomId, requestingMemberId) {
+  return postApi('roomAction', { action: 'unlock', roomId, memberId: requestingMemberId });
 }

@@ -1,5 +1,5 @@
-import React, { useMemo } from 'react';
-import { Turnstile } from '@marsidev/react-turnstile';
+import { useMemo, useState } from 'react';
+import { BotCheck } from './BotCheck.jsx';
 import { formatPrettyDate } from '../../utils/storage.js';
 
 export function CreateView({
@@ -27,7 +27,8 @@ export function CreateView({
   setPreferredEnd,
   honeypot,
   setHoneypot,
-  setTurnstileToken
+  setTurnstileToken,
+  turnstileRef
 }) {
   const [preferredPreset, setPreferredPreset] = useState('morning');
 
@@ -147,7 +148,7 @@ export function CreateView({
                   value={startDate}
                   onChange={(e) => {
                     setStartDate(e.target.value);
-                    setPreset('custom');
+                    handlePresetChange('custom');
                   }}
                   required
                 />
@@ -161,7 +162,7 @@ export function CreateView({
                   value={endDate}
                   onChange={(e) => {
                     setEndDate(e.target.value);
-                    setPreset('custom');
+                    handlePresetChange('custom');
                   }}
                   required
                 />
@@ -225,13 +226,7 @@ export function CreateView({
               </div>
             )}
 
-            <div style={{ display: 'none' }}>
-              <Turnstile 
-                siteKey="0x4AAAAAAFCMNSFcIEw0ivSc" 
-                options={{ action: 'submit-form' }}
-                onSuccess={(token) => setTurnstileToken(token)}
-              />
-            </div>
+            <BotCheck ref={turnstileRef} action="create-room" onToken={setTurnstileToken} />
 
             <button className="btn-primary" style={{ marginTop: '12px' }} type="submit">
               Create plan &amp; get link

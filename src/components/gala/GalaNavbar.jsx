@@ -1,6 +1,6 @@
-import React from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useScrollPosition } from '../../hooks/useScrollPosition.js';
+import { NavMenu } from '../shared/NavMenu.jsx';
 
 /**
  * Navbar for /gala/* routes.
@@ -9,7 +9,6 @@ import { useScrollPosition } from '../../hooks/useScrollPosition.js';
 export function GalaNavbar({ rightSlot }) {
   const isScrolled = useScrollPosition();
   const navigate = useNavigate();
-  const location = useLocation();
 
   const handleLogoClick = () => {
     navigate('/');
@@ -31,13 +30,13 @@ export function GalaNavbar({ rightSlot }) {
           kelan<span>tayo</span>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+        <NavMenu>
           {rightSlot || (
             <Link to="/create" className="nav-cta">
               Create a plan
             </Link>
           )}
-        </div>
+        </NavMenu>
       </nav>
     </div>
   );

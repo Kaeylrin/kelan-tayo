@@ -1,5 +1,3 @@
-import { STORAGE_PREFIX, LAST_ROOM_KEY } from '../constants/config.js';
-
 export function formatDateISO(date) {
   const y = date.getFullYear();
   const m = String(date.getMonth() + 1).padStart(2, '0');
@@ -40,45 +38,4 @@ export function getDatesArray(startDateStr, endDateStr) {
     curr.setDate(curr.getDate() + 1);
   }
   return dates;
-}
-
-export function generateRoomCode() {
-  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  let rand = '';
-  for (let i = 0; i < 3; i++) {
-    rand += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  const num = Math.floor(100 + Math.random() * 900);
-  return `KLTY-${rand}${num}`;
-}
-
-export function saveRoomToStorage(room) {
-  try {
-    localStorage.setItem(STORAGE_PREFIX + room.code, JSON.stringify(room));
-    localStorage.setItem(LAST_ROOM_KEY, room.code);
-  } catch (err) {
-    console.error('Failed saving room to localStorage:', err);
-  }
-}
-
-export function loadRoomFromStorage(code) {
-  try {
-    const data = localStorage.getItem(STORAGE_PREFIX + code);
-    return data ? JSON.parse(data) : null;
-  } catch (err) {
-    console.error('Failed reading room from localStorage:', err);
-    return null;
-  }
-}
-
-export function getRoomFromStorage(code) {
-  return loadRoomFromStorage(code);
-}
-
-export function getLastActiveRoomCode() {
-  try {
-    return localStorage.getItem(LAST_ROOM_KEY);
-  } catch (err) {
-    return null;
-  }
 }

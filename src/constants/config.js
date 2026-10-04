@@ -1,4 +1,3 @@
-export const STORAGE_PREFIX = 'kelan_tayo_room_';
 export const LAST_ROOM_KEY = 'kelan_tayo_active_room';
 export const LAST_USER_KEY = 'kelan_tayo_user_name';
 

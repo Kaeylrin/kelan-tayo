@@ -1,49 +1,36 @@
-import { createClient } from '@supabase/supabase-js';
+import {
+  ApiError, LIMITS, withGuard, assertPostFromSite, getClientIp, verifyTurnstile,
+  getAdminClient, rateLimit, cleanText, assertUuid,
+} from './_lib/guard.js';
 
-// Vercel Serverless Function to securely join a room using the Service Role Key
-export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
+// Adds a new member to an existing room.
+export default withGuard(async (req, res) => {
+  assertPostFromSite(req);
+  const ip = getClientIp(req);
+  await verifyTurnstile(req.body.turnstileToken, ip);
 
-  const { roomId, displayName } = req.body;
+  const roomId = assertUuid(req.body.roomId, 'room');
+  const displayName = cleanText(req.body.displayName, LIMITS.displayName, 'Display name');
 
-  if (!roomId || !displayName) {
-    return res.status(400).json({ error: 'Missing required fields' });
-  }
+  const supabase = getAdminClient();
+  await rateLimit(supabase, ip, 'join_room', 20, 60 * 60);
 
-  // Anti-bot: Require a custom client header that simple python scripts won't have
-  const clientHeader = req.headers['x-kelan-tayo-client'];
-  if (clientHeader !== 'v1.3.3') {
-    return res.status(403).json({ error: 'Unauthorized request origin' });
-  }
+  const { data: room } = await supabase.from('rooms').select('id, status').eq('id', roomId).maybeSingle();
+  if (!room) throw new ApiError(404, 'Room not found');
+  if (room.status === 'confirmed') throw new ApiError(409, 'This plan is already locked in');
 
-  // Verify honeypot (if passed)
-  if (req.body.website) {
-    return res.status(200).json({ message: 'Success' });
-  }
-
-  const supabaseUrl = process.env.VITE_SUPABASE_URL;
-  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY; 
-
-  if (!supabaseUrl || !supabaseKey) {
-    return res.status(500).json({ error: 'Server configuration error' });
-  }
-
-  const supabase = createClient(supabaseUrl, supabaseKey);
+  const { count } = await supabase
+    .from('members')
+    .select('id', { count: 'exact', head: true })
+    .eq('room_id', roomId);
+  if (count >= LIMITS.maxMembersPerRoom) throw new ApiError(409, 'This room is full');
 
   const { data, error } = await supabase
     .from('members')
-    .insert([{
-      room_id: roomId,
-      display_name: displayName
-    }])
+    .insert({ room_id: roomId, display_name: displayName })
     .select()
     .single();
-
-  if (error) {
-    return res.status(400).json({ error: error.message });
-  }
+  if (error) throw new ApiError(400, 'Could not join the room');
 
   return res.status(200).json(data);
-}
+});

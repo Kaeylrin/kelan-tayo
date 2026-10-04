@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { Navbar } from '../components/shared/Navbar.jsx';
@@ -6,6 +6,7 @@ import { MarkScheduleView } from '../components/room/MarkScheduleView.jsx';
 import { DashboardView } from '../components/room/DashboardView.jsx';
 import { ConfirmDateModal } from '../components/shared/Modals.jsx';
 import { Footer } from '../components/shared/Footer.jsx';
+import { BotCheck } from '../components/shared/BotCheck.jsx';
 
 import { LAST_ROOM_KEY, LAST_USER_KEY } from '../constants/config.js';
 import { formatDateISO, getDatesArray } from '../utils/storage.js';
@@ -27,6 +28,8 @@ export function RoomPage() {
   const [toastMessage, setToastMessage] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [confirmModalData, setConfirmModalData] = useState(null);
+  const [turnstileToken, setTurnstileToken] = useState(null);
+  const turnstileRef = useRef(null);
 
   const showToast = (msg) => {
     setToastMessage(msg);
@@ -45,7 +48,7 @@ export function RoomPage() {
       const memory = JSON.parse(localStorage.getItem('kelan_memberships') || '{}');
       memory[roomId] = memberId;
       localStorage.setItem('kelan_memberships', JSON.stringify(memory));
-    } catch {}
+    } catch { /* storage unavailable */ }
   };
 
   const loadRoomData = useCallback(async (roomCode) => {
@@ -119,7 +122,9 @@ export function RoomPage() {
       localStorage.setItem(LAST_USER_KEY, trimmed);
       let memberId = currentUser?.id;
       if (!memberId) {
-        const member = await joinRoom(currentRoom.id, trimmed);
+        if (!turnstileToken) { showToast('Verifying you are human... please try again in a second.'); return; }
+        const member = await joinRoom(currentRoom.id, trimmed, turnstileToken);
+        setTurnstileToken(null);
         memberId = member.id;
         setCurrentUser(member);
         saveDeviceMemberId(currentRoom.id, member.id);
@@ -132,9 +137,7 @@ export function RoomPage() {
         const [dStr, hour] = slot.split('_');
         if (slotsByDate[dStr]) slotsByDate[dStr].push(parseInt(hour, 10));
       });
-      for (const [dStr, hours] of Object.entries(slotsByDate)) {
-        await saveAvailability(memberId, currentRoom.id, dStr, hours);
-      }
+      await saveAvailability(memberId, currentRoom.id, slotsByDate);
       // Refresh participant count
       const members = await listMembers(currentRoom.id);
       setCurrentRoom(prev => ({ ...prev, participantCount: members.length }));
@@ -142,7 +145,8 @@ export function RoomPage() {
       setTimeout(() => setActiveTab('dashboard'), 350);
     } catch (err) {
       console.error(err);
-      showToast('Failed to save schedule.');
+      showToast(err.message || 'Failed to save schedule.');
+      if (!currentUser) turnstileRef.current?.reset();
     } finally {
       setIsLoading(false);
     }
@@ -155,7 +159,7 @@ export function RoomPage() {
       localStorage.removeItem(LAST_ROOM_KEY);
       showToast('Left the plan.');
       navigate('/create');
-    } catch (e) {
+    } catch {
       showToast('Failed to leave plan properly.');
     } finally {
       setIsLoading(false);
@@ -194,8 +198,6 @@ export function RoomPage() {
         isRoomPage={true}
         activeTab={activeTab}
         setActiveTab={setActiveTab}
-        currentRoom={currentRoom}
-        onShowToast={showToast}
         onLeaveRoom={handleLeaveRoom}
       />
       {toastMessage && <div className="toast">{toastMessage}</div>}
@@ -218,6 +220,9 @@ export function RoomPage() {
             isLocked={currentRoom.status === 'confirmed'}
           />
         )}
+        {activeTab === 'mark' && !currentUser && currentRoom.status !== 'confirmed' && (
+          <BotCheck ref={turnstileRef} action="join-room" onToken={setTurnstileToken} />
+        )}
         {activeTab === 'dashboard' && (
           <DashboardView
             room={roomForViews}
@@ -230,7 +235,7 @@ export function RoomPage() {
                 const updated = await unlockRoom(currentRoom.id, currentUser.id);
                 setCurrentRoom(updated);
                 showToast('Room unlocked!');
-              } catch { showToast('Error unlocking.'); }
+              } catch (err) { showToast(err.message || 'Error unlocking.'); }
               setIsLoading(false);
             }}
           />
@@ -250,8 +255,8 @@ export function RoomPage() {
               setCurrentRoom(updated);
               setConfirmModalData(null);
               showToast('Plan confirmed and locked!');
-            } catch (e) {
-              showToast('Error confirming plan.');
+            } catch (err) {
+              showToast(err.message || 'Error confirming plan.');
             }
             setIsLoading(false);
           }}

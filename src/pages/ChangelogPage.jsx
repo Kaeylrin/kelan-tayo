@@ -9,7 +9,7 @@ export function ChangelogPage() {
 
   return (
     <>
-      <Navbar isLandingPage={false} isRoomPage={false} />
+      <Navbar />
       <main className="changelog-main">
         <div className="changelog-header">
           <h1>
@@ -20,6 +20,44 @@ export function ChangelogPage() {
         </div>
 
         <div className="changelog-list">
+          {/* Version 1.4.0 */}
+          <div className="changelog-item">
+            <div className="changelog-meta">
+              <h2>v1.4.0</h2>
+              <span className="changelog-date">October 4, 2026</span>
+            </div>
+            <div className="changelog-content">
+              <div className="changelog-group">
+                <span className="badge added">ADDED</span>
+                <ul>
+                  <li><strong>Mobile menu:</strong> On phones, the navbar links and room tabs now tuck into an animated hamburger menu that opens as a dropdown card and closes when you tap a link, tap outside, or press Escape.</li>
+                  <li><strong>Bot protection on joining:</strong> Joining a room now goes through the same invisible Cloudflare Turnstile check as creating one.</li>
+                  <li><strong>Rate limits and room caps:</strong> Each device can only create or join a limited number of rooms per hour, and a room can have at most 50 members.</li>
+                </ul>
+              </div>
+              <div className="changelog-group">
+                <span className="badge changed">CHANGED</span>
+                <ul>
+                  <li><strong>Locked-down database:</strong> Every change to a room (creating, joining, saving availability, confirming, unlocking and leaving) now goes through our secure server. Browsers can only read room data, so bots can no longer write to the database directly.</li>
+                  <li>Room codes are now generated on the server, and creating a plan is a single request instead of three.</li>
+                  <li>Saving your schedule is now one request instead of one per day, so it is much faster on long date ranges.</li>
+                  <li>Plan names and display names are cleaned of invisible characters and limited to 60 and 40 characters.</li>
+                  <li>Landing page stats now come straight from the database, counting only rooms that look like real groups.</li>
+                  <li>Updated the Privacy Policy to describe Cloudflare Turnstile and the hashed-IP rate limits.</li>
+                </ul>
+              </div>
+              <div className="changelog-group">
+                <span className="badge fixed">FIXED</span>
+                <ul>
+                  <li>Fixed the Create page crashing on load.</li>
+                  <li>Fixed refreshing or opening a shared room link directly showing a 404 page.</li>
+                  <li>The bot check no longer stays hidden when Cloudflare needs you to click it, so real users are no longer silently blocked.</li>
+                  <li>Removed old debugging scripts and unused files from the project.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
           {/* Version 1.3.2 */}
           <div className="changelog-item">
             <div className="changelog-meta">

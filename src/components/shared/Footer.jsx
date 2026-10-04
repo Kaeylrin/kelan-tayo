@@ -9,7 +9,7 @@ export function Footer() {
           <Link to="/changelog" className="footer-link">Changelog</Link>
           <Link to="/privacy" className="footer-link">Privacy</Link>
           <Link to="/terms" className="footer-link">Terms</Link>
-          <span className="footer-version">v1.3.2</span>
+          <span className="footer-version">v1.4.0</span>
         </div>
         <div className="footer-copy">
           Created by Wrenier

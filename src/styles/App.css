@@ -2513,7 +2513,6 @@ a.gala-badge:hover {
 }
 
 @media (max-width: 768px) {
-  .hide-mobile { display: none; }
   .changelog-item {
     grid-template-columns: 1fr;
     gap: 24px;
@@ -2541,3 +2540,171 @@ a.gala-badge:hover {
   text-decoration: underline;
 }
 
+
+/* ---------- Navbar actions + mobile hamburger menu ---------- */
+.floating-navbar {
+  position: relative;
+}
+
+.nav-menu {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-left: 16px;
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 14px;
+}
+
+.tab-btn-leave {
+  color: var(--coral);
+  opacity: 0.8;
+}
+
+.nav-burger,
+.nav-mobile-menu {
+  display: none;
+}
+
+.bot-check {
+  display: flex;
+  justify-content: center;
+}
+
+@media (max-width: 900px) and (min-width: 769px) {
+  .nav-menu,
+  .nav-actions {
+    flex: 1;
+  }
+}
+
+@media (max-width: 768px) {
+  .nav-actions {
+    display: none;
+  }
+
+  .nav-burger {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border-radius: 50%;
+    border: 1px solid var(--cream-faint);
+    background: rgba(246, 241, 231, 0.06);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: background 0.25s ease, border-color 0.25s ease, transform 0.15s ease;
+  }
+  .nav-burger:active { transform: scale(0.92); }
+  .nav-burger:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+  .nav-burger.open {
+    background: var(--gold);
+    border-color: var(--gold);
+  }
+
+  .nav-burger-line {
+    display: block;
+    width: 18px;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--cream);
+    transition: transform 0.4s cubic-bezier(0.68, -0.4, 0.32, 1.4), opacity 0.2s ease, background 0.25s ease;
+  }
+  .nav-burger.open .nav-burger-line { background: var(--blue-deep); }
+  .nav-burger.open .nav-burger-line:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .nav-burger.open .nav-burger-line:nth-child(2) { opacity: 0; transform: scaleX(0); }
+  .nav-burger.open .nav-burger-line:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  .nav-mobile-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 0;
+    right: 0;
+    padding: 14px;
+    background: rgba(20, 44, 104, 0.97);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(246, 241, 231, 0.18);
+    border-radius: 22px;
+    box-shadow: 0 18px 40px rgba(8, 18, 46, 0.45);
+    transform-origin: top right;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px) scale(0.96);
+    transition: opacity 0.2s ease, transform 0.25s ease, visibility 0s linear 0.25s;
+  }
+  .nav-mobile-menu.open {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    transition: opacity 0.25s ease, transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), visibility 0s;
+  }
+
+  /* Items slide in one after another */
+  .nav-mobile-menu > *,
+  .nav-mobile-menu .tabs > * {
+    opacity: 0;
+    transform: translateY(-6px);
+    transition: opacity 0.2s ease, transform 0.3s ease;
+  }
+  .nav-mobile-menu.open > *,
+  .nav-mobile-menu.open .tabs > * {
+    opacity: 1;
+    transform: none;
+  }
+  .nav-mobile-menu.open > :nth-child(1),
+  .nav-mobile-menu.open .tabs > :nth-child(1) { transition-delay: 0.06s; }
+  .nav-mobile-menu.open > :nth-child(2),
+  .nav-mobile-menu.open .tabs > :nth-child(2) { transition-delay: 0.11s; }
+  .nav-mobile-menu.open .tabs > :nth-child(3) { transition-delay: 0.16s; }
+  .nav-mobile-menu .tabs { opacity: 1; transform: none; }
+
+  .nav-mobile-menu .nav-link-secondary,
+  .nav-mobile-menu .nav-cta,
+  .nav-mobile-menu .btn-secondary {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin: 0 !important;
+    padding: 13px 18px;
+    font-size: 15px;
+  }
+  .nav-mobile-menu .nav-cta { margin-bottom: 4px !important; }
+
+  .nav-mobile-menu .tabs {
+    flex-direction: column;
+    width: 100%;
+    gap: 8px;
+    padding: 0;
+    background: transparent;
+    border: none;
+  }
+  .nav-mobile-menu .tab-btn {
+    flex: none;
+    width: 100%;
+    padding: 12px;
+    font-size: 15px;
+    border: 1px solid var(--cream-faint);
+  }
+  .nav-mobile-menu .tab-btn.active { border-color: var(--gold); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-burger-line,
+  .nav-mobile-menu,
+  .nav-mobile-menu > *,
+  .nav-mobile-menu .tabs > * {
+    transition: none !important;
+  }
+}
