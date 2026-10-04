@@ -53,6 +53,8 @@ alter table public.members add constraint members_display_name_length
   check (char_length(display_name) between 1 and 40) not valid;
 
 -- 4. Hard cap of 50 members per room, even if the API is bypassed.
+--    The index keeps the per-room count (and the stats query) fast.
+create index if not exists members_room_id_idx on public.members (room_id);
 create or replace function public.enforce_room_member_cap()
 returns trigger language plpgsql as $$
 begin
