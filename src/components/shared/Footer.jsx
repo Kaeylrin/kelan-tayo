@@ -5,7 +5,7 @@ export function Footer() {
     <footer>
       <div className="footer-inner">
         <div className="footer-links">
-          <Link to="/changelog" className="footer-link">Changelog</Link>
+          <Link to="/changelog" className="footer-link">Changelogs</Link>
           <Link to="/privacy" className="footer-link">Privacy</Link>
           <Link to="/terms" className="footer-link">Terms</Link>
           <span className="footer-version">v{__APP_VERSION__}</span>
