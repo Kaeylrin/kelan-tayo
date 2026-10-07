@@ -15,6 +15,23 @@ export function ChangelogPage() {
         </div>
 
         <div className="changelog-list">
+          {/* Version 1.5.1 */}
+          <div className="changelog-item">
+            <div className="changelog-meta">
+              <h2>v1.5.1</h2>
+              <span className="changelog-date">October 7, 2026</span>
+            </div>
+            <div className="changelog-content">
+              <div className="changelog-group">
+                <span className="badge changed">CHANGED</span>
+                <ul>
+                  <li>Removed the "Regular Gala" badge beside the logo on Regular Gala pages.</li>
+                  <li>Navbar buttons ("Regular Gala", "Create a plan", "My galas") are now the same size, both at the top of the page and in the scrolled pill.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
           {/* Version 1.5.0 */}
           <div className="changelog-item">
             <div className="changelog-meta">

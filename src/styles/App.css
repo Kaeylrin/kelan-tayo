@@ -107,30 +107,6 @@ body {
   font-size: 21px;
 }
 
-.floating-nav-wrapper.scrolled .nav-cta {
-  padding: 7px 16px;
-  font-size: 13px;
-}
-
-/* "Create a plan" CTA button in the landing page nav */
-.nav-cta {
-  background: var(--gold);
-  color: var(--blue-deep);
-  border: none;
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-weight: 800;
-  font-size: 14px;
-  padding: 10px 20px;
-  border-radius: 100px;
-  cursor: pointer;
-  text-decoration: none;
-  box-shadow: 0 4px 0 #C9910F;
-  transition: opacity 0.2s;
-  display: inline-block;
-}
-
-.nav-cta:hover { opacity: 0.88; }
-
 .logo {
   font-family: 'Baloo 2', sans-serif;
   font-size: 25px;
@@ -1391,10 +1367,6 @@ footer {
     flex-direction: row;
     justify-content: space-between;
   }
-  .nav-cta {
-    padding: 8px 14px;
-    font-size: 13px;
-  }
   .tabs {
     width: 100%;
     justify-content: space-between;
@@ -1462,26 +1434,6 @@ footer {
 /* Nav spacer so content starts below fixed nav */
 
 /* Landing logo (link variant â€” no underline) */
-
-/* Nav CTA pill */
-.nav-cta {
-  background: var(--gold);
-  color: var(--blue-deep);
-  border: none;
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-weight: 800;
-  font-size: 14px;
-  padding: 11px 22px;
-  border-radius: 100px;
-  cursor: pointer;
-  text-decoration: none;
-  box-shadow: 0 4px 0 #C9910F;
-  transition: background 0.15s ease, box-shadow 0.15s ease;
-}
-
-.nav-cta:hover {
-  background: var(--gold-hover);
-}
 
 /* ---------- Hero ---------- */
 .hero {
@@ -1856,10 +1808,6 @@ footer {
   color: var(--cream) !important;
 }
 
-.nav-cta {
-  margin-bottom: 4px !important;
-}
-
 /* ---------- Regular Gala CSS ---------- */
 
 /* Gala nav badge */
@@ -2021,24 +1969,6 @@ footer {
 /* Gala responsive */
 @media (max-width: 860px) {
   .gala-steps-grid { grid-template-columns: 1fr; }
-}
-
-/* Nav secondary link — matches 'See how it works' btn-secondary style */
-.nav-link-secondary {
-  background: transparent;
-  border: 1px solid var(--cream-faint);
-  color: var(--cream);
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-weight: 700;
-  font-size: 13px;
-  padding: 9px 18px;
-  border-radius: 100px;
-  cursor: pointer;
-  text-decoration: none;
-  transition: opacity 0.2s;
-}
-.nav-link-secondary:hover {
-  opacity: 0.8;
 }
 .landing-grid-layout { margin-top: 120px; }
 
@@ -2594,21 +2524,15 @@ a.btn-primary, a.btn-secondary { text-decoration: none; }
 .step-image img { transition: transform 0.6s var(--ease-out); }
 .step-image:hover img { transform: scale(1.02); }
 
-.nav-cta,
-.nav-link-secondary,
 .btn-primary,
 .spot-btn,
 .pick-btn {
   transition: background 0.2s ease, opacity 0.2s ease, transform 0.15s var(--ease-out), box-shadow 0.15s ease, border-color 0.2s ease;
 }
 
-.nav-cta:hover,
-.nav-link-secondary:hover,
 .spot-btn:hover { transform: translateY(-1px); }
-.nav-link-secondary:hover { opacity: 1; border-color: rgba(246, 241, 231, 0.4); background: rgba(246, 241, 231, 0.06); }
 .spot-btn:hover { background: var(--gold-hover); }
 .spot-btn:active, .pick-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--gold-shadow); }
-button.nav-link-secondary { font-family: inherit; }
 
 .spot-input { transition: border-color 0.2s ease, box-shadow 0.2s ease; outline: none; }
 .spot-input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(255, 198, 75, 0.2); }
@@ -3533,21 +3457,62 @@ button.nav-link-secondary { font-family: inherit; }
   .reveal { opacity: 1; transform: none; }
 }
 
-/* Regular Gala nav badge, beside the logo (Regular Gala entry screen guide) */
-.gala-badge {
-  background: var(--cream-faint);
-  border: 1px solid var(--cream-faint);
-  color: var(--gold);
-  font-family: 'Baloo 2', sans-serif;
-  font-weight: 700;
-  font-size: 14px;
-  padding: 8px 16px;
+
+/* ---------- Navbar buttons ----------
+   "Create a plan" and the secondary link (Regular Gala, My galas, Switch email)
+   share one size so they line up, at rest and in the scrolled pill. */
+.nav-cta,
+.nav-link-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  height: 42px;
+  padding: 0 20px;
   border-radius: 100px;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1;
   white-space: nowrap;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.15s var(--ease-out), box-shadow 0.15s ease, height 0.35s ease, padding 0.35s ease, font-size 0.35s ease;
+}
+
+.nav-cta {
+  background: var(--gold);
+  color: var(--blue-deep);
+  border: 1.5px solid var(--gold);
+  box-shadow: 0 4px 0 var(--gold-shadow);
+  margin-bottom: 4px;
+}
+
+.nav-link-secondary {
+  background: transparent;
+  color: var(--cream);
+  border: 1.5px solid var(--cream-faint);
+  margin-bottom: 4px;
+}
+
+.nav-cta:hover { background: var(--gold-hover); border-color: var(--gold-hover); transform: translateY(-1px); }
+.nav-cta:active { transform: translateY(2px); box-shadow: 0 2px 0 var(--gold-shadow); }
+.nav-link-secondary:hover { background: rgba(246, 241, 231, 0.08); border-color: rgba(246, 241, 231, 0.4); transform: translateY(-1px); }
+.nav-link-secondary:active { transform: translateY(1px); }
+
+.floating-nav-wrapper.scrolled .nav-cta,
+.floating-nav-wrapper.scrolled .nav-link-secondary {
+  height: 36px;
+  padding: 0 16px;
+  font-size: 13px;
+}
+
+@media (max-width: 900px) {
+  .nav-cta,
+  .nav-link-secondary { height: 38px; padding: 0 16px; font-size: 13px; }
 }
 
 @media (max-width: 768px) {
-  .nav-mobile-menu .gala-badge { text-align: center; }
+  .nav-mobile-menu .nav-cta,
+  .nav-mobile-menu .nav-link-secondary { height: 48px; padding: 0 18px; font-size: 15px; }
 }
-.gala-badge-nav { margin-left: 12px; margin-right: auto; font-size: 13px; padding: 5px 12px; }
-@media (max-width: 380px) { .gala-badge-nav { display: none; } }

@@ -5,8 +5,7 @@ import { scrollToTarget } from '../../utils/smoothScroll.js';
 
 /**
  * Navbar for /gala/* routes.
- * Shows: logo + "Regular Gala" badge | Create a plan CTA (or a page-specific action),
- * per the Regular Gala entry screen guide.
+ * Shows: logo | Create a plan CTA (or a page-specific action).
  */
 export function GalaNavbar({ rightSlot }) {
   const isScrolled = useScrollPosition();
@@ -34,7 +33,6 @@ export function GalaNavbar({ rightSlot }) {
         >
           kelan<span>tayo</span>
         </div>
-        <span className="gala-badge gala-badge-nav">Regular Gala</span>
 
         <NavMenu>
           {rightSlot || (
