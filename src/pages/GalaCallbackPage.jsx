@@ -38,7 +38,7 @@ export function GalaCallbackPage() {
         return;
       }
       setStatusText('Saving your spot…');
-      // Creates the profile on first sign-in; the dashboard retries if this fails.
+      // Creates the profile the first time a spot is saved; the dashboard retries if this fails.
       await getMe().catch(() => {});
       if (!cancelled) navigate(takeNextPath(), { replace: true });
     })();

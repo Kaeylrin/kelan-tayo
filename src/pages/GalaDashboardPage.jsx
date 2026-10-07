@@ -54,7 +54,8 @@ export function GalaDashboardPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps -- load once on mount
   }, []);
 
-  const handleSignOut = async () => {
+  // Forgets the saved spot on this device so another email can be used.
+  const handleSwitchEmail = async () => {
     await signOut();
     navigate('/gala', { replace: true });
   };
@@ -91,7 +92,7 @@ export function GalaDashboardPage() {
 
   return (
     <>
-      <GalaNavbar rightSlot={<button className="nav-link-secondary" type="button" onClick={handleSignOut}>Sign out</button>} />
+      <GalaNavbar rightSlot={<button className="nav-link-secondary" type="button" onClick={handleSwitchEmail}>Switch email</button>} />
       <Toast message={toast} />
 
       <main className="page-main gala-dashboard-main">

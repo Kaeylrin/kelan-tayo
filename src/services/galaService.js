@@ -15,7 +15,7 @@ async function callGala(action, params = {}) {
   return postApi('gala', { action, ...params }, { Authorization: `Bearer ${token}` });
 }
 
-/** Returns { profile } for the signed-in visitor, creating the profile on first use. */
+/** Returns { profile } for the visitor who saved their spot, creating the profile on first use. */
 export const getMe = () => callGala('me');
 
 /** Returns { profile }. */

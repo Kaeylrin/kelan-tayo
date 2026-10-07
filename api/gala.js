@@ -23,7 +23,7 @@ async function getUser(supabase, req) {
   const token = header.startsWith('Bearer ') ? header.slice(7).trim() : '';
   if (!token || token.length > 4096) throw new ApiError(401, 'Please save your spot again to continue.');
   const { data, error } = await supabase.auth.getUser(token);
-  if (error || !data?.user?.id || !data.user.email) throw new ApiError(401, 'Your session expired. Please save your spot again.');
+  if (error || !data?.user?.id || !data.user.email) throw new ApiError(401, 'Your saved spot expired on this device. Please save your spot again.');
   return data.user;
 }
 
