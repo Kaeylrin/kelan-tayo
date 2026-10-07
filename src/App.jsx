@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, useLocation, useNavigationType } from 're
 
 import { MarketingLandingPage } from './pages/MarketingLandingPage.jsx';
 import { initSmoothScroll, scrollToTarget, scrollToTop } from './utils/smoothScroll.js';
+import { hideSplash } from './utils/splash.js';
 
 // Everything except the landing page is split into its own chunk.
 const pageLoaders = {
@@ -108,6 +109,7 @@ function AnimatedRoutes() {
 
 export default function App() {
   useEffect(() => {
+    hideSplash();
     initSmoothScroll();
     if ('scrollRestoration' in window.history) window.history.scrollRestoration = 'manual';
     // Warm up the base-app pages once idle, so navigation feels instant. Regular Gala

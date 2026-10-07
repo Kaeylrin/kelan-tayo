@@ -3516,3 +3516,13 @@ a.btn-primary, a.btn-secondary { text-decoration: none; }
   .nav-mobile-menu .nav-cta,
   .nav-mobile-menu .nav-link-secondary { height: 48px; padding: 0 18px; font-size: 15px; }
 }
+
+/* Hold entrance animations while the first-load splash is up, so they play
+   as it fades instead of finishing behind it (see utils/splash.js). */
+html:not(.is-ready) .page-transition,
+html:not(.is-ready) .page-in main > *,
+html:not(.is-ready) .hero-animate > *,
+html:not(.is-ready) .spot-card,
+html:not(.is-ready) .gala-card {
+  animation-play-state: paused;
+}
