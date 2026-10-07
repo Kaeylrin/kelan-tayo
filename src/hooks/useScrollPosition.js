@@ -1,6 +1,10 @@
 import { useState, useEffect } from 'react';
 
-export function useScrollPosition() {
+/**
+ * True once the page has scrolled past ~80px (landing guide §5).
+ * Hysteresis (80 down / 60 up) stops the pill flickering at the edge.
+ */
+export function useScrollPosition(threshold = 80) {
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
@@ -12,8 +16,8 @@ export function useScrollPosition() {
           const scrollY = window.scrollY;
           // Apply a hysteresis threshold to prevent edge vibration/twitching at limits
           setIsScrolled((prev) => {
-            if (!prev && scrollY > 25) return true;
-            if (prev && scrollY < 15) return false;
+            if (!prev && scrollY > threshold) return true;
+            if (prev && scrollY < threshold - 20) return false;
             return prev;
           });
           ticking = false;
@@ -25,7 +29,7 @@ export function useScrollPosition() {
     window.addEventListener('scroll', handleScroll, { passive: true });
     handleScroll();
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [threshold]);
 
   return isScrolled;
 }

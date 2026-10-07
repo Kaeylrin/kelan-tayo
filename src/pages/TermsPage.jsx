@@ -19,8 +19,8 @@ export default function TermsPage() {
           <h3>3. No Account Required for the Base App</h3>
           <p>The base app does not require you to create an account, provide a password, or verify your identity. Access to a room is based only on having that room's link or code. Because of this, Kelan Tayo has no reliable way to verify who is actually using a room, and you are responsible for only sharing a room's link or code with people you intend to include in that plan.</p>
 
-          <h3>4. Regular Gala and Sign-In</h3>
-          <p>Regular Gala requires a lightweight sign-in using a one-time email link, no password is created or stored. This sign-in exists only to let the app recognize you across weeks for recurring schedules, and does not apply anywhere else in the app. You're responsible for the security of the email account you use to sign in.</p>
+          <h3>4. Regular Gala and Saving Your Spot</h3>
+          <p>Regular Gala asks you to save your spot using a one-time email link, no password is created or stored. Your saved spot exists only to let the app recognize you across weeks for recurring schedules, and does not apply anywhere else in the app. You're responsible for the security of the email you use to save your spot.</p>
 
           <h3>5. Room and Gala Creators</h3>
           <p>The person who creates a room, or a regular gala, is recorded as its creator or owner. Only that person can confirm a final date or recurring schedule, or unlock one to change it. Kelan Tayo is not responsible for disputes between members over which date or schedule should be confirmed, that decision is left to the group.</p>
@@ -30,7 +30,7 @@ export default function TermsPage() {
           <ul>
             <li>Use the app for any unlawful purpose</li>
             <li>Enter content in a plan name, display name, or any other field that is abusive, harassing, or intended to harm another person</li>
-            <li>Attempt to access a room or gala you were not given the link, code, or sign-in access for</li>
+            <li>Attempt to access a room or gala you were not given the link, code, or saved spot for</li>
             <li>Use bots, scripts, or other automated means to create rooms, accounts, or submissions, or to otherwise interact with the app outside of normal human use</li>
             <li>Attempt to disrupt, overload, circumvent security measures on, or interfere with the app's normal operation</li>
           </ul>

@@ -110,8 +110,10 @@ export default function App() {
   useEffect(() => {
     initSmoothScroll();
     if ('scrollRestoration' in window.history) window.history.scrollRestoration = 'manual';
-    // Warm up the other pages once the landing page is idle, so navigation feels instant.
-    const preload = () => Object.values(pageLoaders).forEach((load) => load().catch(() => {}));
+    // Warm up the base-app pages once idle, so navigation feels instant. Regular Gala
+    // pages are left out: base pages stay unaware of the email-link code (Regular Gala guide §4).
+    const basePages = ['create', 'room', 'changelog', 'privacy', 'terms', 'notFound'];
+    const preload = () => basePages.forEach((name) => pageLoaders[name]().catch(() => {}));
     const idle = window.requestIdleCallback || ((cb) => setTimeout(cb, 1500));
     const cancel = window.cancelIdleCallback || clearTimeout;
     const handle = idle(preload);

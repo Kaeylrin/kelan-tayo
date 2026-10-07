@@ -2615,8 +2615,8 @@ button.nav-link-secondary { font-family: inherit; }
 
 .footer-links .footer-link { transition: color 0.2s ease; }
 
-/* How it works: steps 1 and 3 text left, step 2 image left (the heading is child 1). */
-.how-it-works .step:nth-child(odd) .step-text { order: 2; }
+/* How it works: alternating image/text layout (unchanged from v1.4.0). */
+.how-it-works .step:nth-child(even) .step-text { order: 2; }
 
 /* Keep the toast above dialogs. */
 .toast { z-index: 2600; max-width: calc(100vw - 32px); text-align: center; }
@@ -3483,7 +3483,7 @@ button.nav-link-secondary { font-family: inherit; }
 
 /* ---------- Responsive ---------- */
 @media (max-width: 860px) {
-  .how-it-works .step:nth-child(odd) .step-text { order: 0; }
+  .how-it-works .step:nth-child(even) .step-text { order: 0; }
   .legal-card { padding: 30px 22px; }
   .legal-card h1 { font-size: 28px; }
 }
@@ -3532,3 +3532,22 @@ button.nav-link-secondary { font-family: inherit; }
 
   .reveal { opacity: 1; transform: none; }
 }
+
+/* Regular Gala nav badge, beside the logo (Regular Gala entry screen guide) */
+.gala-badge {
+  background: var(--cream-faint);
+  border: 1px solid var(--cream-faint);
+  color: var(--gold);
+  font-family: 'Baloo 2', sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  padding: 8px 16px;
+  border-radius: 100px;
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .nav-mobile-menu .gala-badge { text-align: center; }
+}
+.gala-badge-nav { margin-left: 12px; margin-right: auto; font-size: 13px; padding: 5px 12px; }
+@media (max-width: 380px) { .gala-badge-nav { display: none; } }

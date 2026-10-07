@@ -8,7 +8,6 @@ export function Footer() {
           <Link to="/changelog" className="footer-link">Changelog</Link>
           <Link to="/privacy" className="footer-link">Privacy</Link>
           <Link to="/terms" className="footer-link">Terms</Link>
-          <Link to="/gala" className="footer-link">Regular Gala</Link>
           <span className="footer-version">v{__APP_VERSION__}</span>
         </div>
         <div className="footer-copy">

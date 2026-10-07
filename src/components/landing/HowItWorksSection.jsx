@@ -4,10 +4,6 @@ import { Reveal } from '../shared/Reveal.jsx';
  * HowItWorksSection — three alternating image/text steps.
  * Section id="how-it-works" so the hero anchor link scrolls here.
  *
- * Layout:
- *   Step 1  — text left,  image right  (odd)
- *   Step 2  — image left, text right   (even — CSS handles reorder via nth-child)
- *   Step 3  — text left,  image right  (odd)
  */
 export function HowItWorksSection() {
   return (

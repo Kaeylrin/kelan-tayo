@@ -52,7 +52,6 @@ export function ChangelogPage() {
                   <li>Fixed the "responded" counter always showing 0 and the share box showing a broken link.</li>
                   <li>Schedule grids now open at 8 AM instead of scrolling past it.</li>
                   <li>Fixed a large empty gap at the top of the Regular Gala page and the missing card background on Privacy and Terms.</li>
-                  <li>Fixed the "How it works" steps alternating in the wrong order.</li>
                 </ul>
               </div>
             </div>

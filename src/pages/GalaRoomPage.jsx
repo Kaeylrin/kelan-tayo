@@ -36,7 +36,7 @@ function GalaRoom({ galaId }) {
   const [isJoining, setIsJoining] = useState(false);
   const [toast, showToast] = useToast();
 
-  const sendToSignIn = useCallback(() => {
+  const sendToSaveSpot = useCallback(() => {
     navigate('/gala', { replace: true, state: { next: `/gala/${galaId}` } });
   }, [navigate, galaId]);
 
@@ -46,21 +46,21 @@ function GalaRoom({ galaId }) {
       setData(result);
       setStatus('ready');
     } catch (err) {
-      if (err.status === 401) sendToSignIn();
+      if (err.status === 401) sendToSaveSpot();
       else if (err.status === 404 || err.status === 400) setStatus('notfound');
       else setStatus('error');
     }
-  }, [galaId, sendToSignIn]);
+  }, [galaId, sendToSaveSpot]);
 
   useEffect(() => {
     let cancelled = false;
     getSession().then((session) => {
       if (cancelled) return;
-      if (!session) sendToSignIn();
+      if (!session) sendToSaveSpot();
       else fetchGala();
     });
     return () => { cancelled = true; };
-  }, [fetchGala, sendToSignIn]);
+  }, [fetchGala, sendToSaveSpot]);
 
   const handleJoin = async () => {
     setIsJoining(true);
