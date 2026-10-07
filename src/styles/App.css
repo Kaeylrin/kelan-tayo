@@ -3526,3 +3526,15 @@ html:not(.is-ready) .spot-card,
 html:not(.is-ready) .gala-card {
   animation-play-state: paused;
 }
+
+/* Loading indicators only appear when something actually takes a moment:
+   they fade in after a short delay, so quick loads never flash a spinner. */
+.page-loading,
+.loading-overlay {
+  animation: loading-reveal 0.25s ease 0.3s both;
+}
+@keyframes loading-reveal { from { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .page-loading,
+  .loading-overlay { animation: loading-reveal 0.01ms linear 0.3s both; }
+}

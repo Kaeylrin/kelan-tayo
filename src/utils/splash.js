@@ -1,9 +1,9 @@
-// Fades out the first-load splash from index.html once the app has mounted
-// and the fonts are ready (capped so a slow font never holds the page),
-// keeping it up for a minimum time so it doesn't just flash.
+// Fades out the first-load splash from index.html as soon as the first page
+// has actually rendered and the fonts are ready (capped so a slow font never
+// holds the page). There is no minimum time: on a fast or cached load the
+// splash clears before its logo ever appears (the logo is delayed in CSS).
 
-const MIN_VISIBLE_MS = 550;
-const FONT_WAIT_CAP_MS = 1800;
+const FONT_WAIT_CAP_MS = 1500;
 
 let started = false;
 
@@ -13,19 +13,17 @@ export function hideSplash() {
   if (started) return;
   started = true;
 
-  const remaining = Math.max(0, MIN_VISIBLE_MS - performance.now());
   const fontsReady = document.fonts?.ready ?? Promise.resolve();
 
-  Promise.race([fontsReady, wait(FONT_WAIT_CAP_MS)])
-    .then(() => wait(remaining))
-    .then(() => {
-      // Entrance animations are held until this class is set (see App.css).
-      document.documentElement.classList.add('is-ready');
-      const splash = document.getElementById('splash');
-      if (!splash) return;
-      splash.classList.add('is-leaving');
-      const remove = () => splash.remove();
-      splash.addEventListener('transitionend', remove, { once: true });
-      setTimeout(remove, 1000);
-    });
+  Promise.race([fontsReady, wait(FONT_WAIT_CAP_MS)]).then(() => {
+    // Entrance animations are held until this class is set (see App.css).
+    document.documentElement.classList.add('is-ready');
+    const splash = document.getElementById('splash');
+    if (!splash) return;
+    splash.classList.add('is-leaving');
+    const remove = () => splash.remove();
+    splash.addEventListener('transitionend', remove, { once: true });
+    setTimeout(remove, 800);
+  });
 }
+

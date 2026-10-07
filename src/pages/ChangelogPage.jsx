@@ -31,7 +31,7 @@ export function ChangelogPage() {
                   <li><strong>Pause controls:</strong> Pause just yourself or the whole gala without losing any schedules.</li>
                   <li><strong>Invite links:</strong> Opening a gala link on a new device takes you through "Save your spot" and straight back to the gala.</li>
                   <li><strong>Smooth scrolling and motion:</strong> Mouse-wheel scrolling now glides, pages fade between each other, and sections ease in as you scroll. Everything respects your device's reduced-motion setting.</li>
-                  <li><strong>Loading screen:</strong> The Kelan Tayo logo now shows while the site first loads, then fades away once everything is ready.</li>
+                  <li><strong>Loading screen:</strong> When the site takes a moment to load, the Kelan Tayo logo shows until the page is ready. Spinners only appear when something is actually slow, so fast loads never flash one.</li>
                   <li>A proper 404 page for broken links, and a leave confirmation before you leave a plan.</li>
                 </ul>
               </div>
