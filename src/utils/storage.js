@@ -39,3 +39,33 @@ export function getDatesArray(startDateStr, endDateStr) {
   }
   return dates;
 }
+
+/** Hour index (0-24) → "HH:MM" for the API. 24 means end of day. */
+export function hourToClock(h) {
+  if (h >= 24) return '23:59';
+  return `${String(h).padStart(2, '0')}:00`;
+}
+
+/** "14:00" or "14:00:00" → "2:00 PM". */
+export function formatClock(value) {
+  if (!value) return '';
+  const [hStr, mStr = '00'] = String(value).split(':');
+  const h = parseInt(hStr, 10);
+  if (Number.isNaN(h)) return String(value);
+  const suffix = h >= 12 && h < 24 ? 'PM' : 'AM';
+  const hour12 = h % 12 === 0 ? 12 : h % 12;
+  return `${hour12}:${mStr.slice(0, 2)} ${suffix}`;
+}
+
+/**
+ * Scrolls a schedule grid so the row marked data-scroll-anchor sits just
+ * below the sticky day header. Uses layout rects, so it works no matter
+ * which ancestor is positioned.
+ */
+export function scrollGridToAnchor(container) {
+  const anchor = container?.querySelector('[data-scroll-anchor="true"]');
+  if (!anchor) return;
+  const header = container.querySelector('.day-head');
+  const offset = anchor.getBoundingClientRect().top - container.getBoundingClientRect().top;
+  container.scrollTop = container.scrollTop + offset - (header?.offsetHeight || 0) - 4;
+}

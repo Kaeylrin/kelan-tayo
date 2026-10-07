@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { NavMenu } from './NavMenu.jsx';
+import { useScrollPosition } from '../../hooks/useScrollPosition.js';
+import { scrollToTarget } from '../../utils/smoothScroll.js';
 
 /**
  * Navbar — Always Pill
@@ -12,26 +13,18 @@ import { NavMenu } from './NavMenu.jsx';
  *
  * On mobile the links/tabs collapse into a hamburger menu (see NavMenu).
  *
- * Scroll behavior:
- *  scroll = 0   → full-width pill (same as the current app nav)
- *  scroll > 80  → shrinks to centered floating pill (narrower, backdrop blur)
+ * Scroll behavior: full-width pill at the top, shrinks to a centered
+ * floating pill once the page scrolls.
  */
 export function Navbar({ isRoomPage = false, activeTab, setActiveTab, onLeaveRoom }) {
-  const [scrolled, setScrolled] = useState(false);
+  const scrolled = useScrollPosition();
   const navigate = useNavigate();
   const location = useLocation();
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 80);
-    window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
 
   const handleLogoClick = () => {
     if (location.pathname === '/') {
       // Already on landing page — smooth scroll to top
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      scrollToTarget(0);
     } else {
       navigate('/');
     }
@@ -46,7 +39,8 @@ export function Navbar({ isRoomPage = false, activeTab, setActiveTab, onLeaveRoo
           onClick={handleLogoClick}
           role="button"
           tabIndex={0}
-          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') handleLogoClick(); }}
+          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleLogoClick(); } }}
+          aria-label="Kelan Tayo home"
         >
           kelan<span>tayo</span>
         </div>
@@ -91,6 +85,8 @@ export function Navbar({ isRoomPage = false, activeTab, setActiveTab, onLeaveRoo
                   className="tab-btn tab-btn-leave"
                   onClick={onLeaveRoom}
                   type="button"
+                  role="tab"
+                  aria-selected={false}
                 >
                   Leave
                 </button>

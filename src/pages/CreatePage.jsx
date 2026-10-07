@@ -1,77 +1,70 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { Navbar } from '../components/shared/Navbar.jsx';
 import { CreateView } from '../components/shared/CreateView.jsx';
 import { Footer } from '../components/shared/Footer.jsx';
+import { Toast } from '../components/shared/Toast.jsx';
+import { useToast } from '../hooks/useToast.js';
 
 import { LAST_ROOM_KEY, LAST_USER_KEY } from '../constants/config.js';
 import { formatDateISO } from '../utils/storage.js';
+import { readStorage, writeStorage, saveDeviceMemberId } from '../utils/deviceMemory.js';
 
 import { createRoom, getRoomByCode } from '../services/roomService.js';
+
+const MAX_RANGE_DAYS = 62;
+
+function rangeFromToday(days) {
+  const start = new Date();
+  const end = new Date(start);
+  end.setDate(start.getDate() + days - 1);
+  return [formatDateISO(start), formatDateISO(end)];
+}
 
 export function CreatePage() {
   const navigate = useNavigate();
 
-  const [userName, setUserName] = useState('');
+  const [userName, setUserName] = useState(() => readStorage(LAST_USER_KEY) || '');
   const [planName, setPlanName] = useState('');
   const [preset, setPreset] = useState('7');
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
+  const [startDate, setStartDate] = useState(() => rangeFromToday(7)[0]);
+  const [endDate, setEndDate] = useState(() => rangeFromToday(7)[1]);
   const [joinCode, setJoinCode] = useState('');
   const [preferredStart, setPreferredStart] = useState('08:00');
   const [preferredEnd, setPreferredEnd] = useState('22:00');
-  const [toastMessage, setToastMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [honeypot, setHoneypot] = useState('');
   const [turnstileToken, setTurnstileToken] = useState(null);
   const turnstileRef = useRef(null);
-
-  const showToast = (msg) => {
-    setToastMessage(msg);
-    setTimeout(() => setToastMessage(''), 2800);
-  };
-
-  const saveDeviceMemberId = (roomId, memberId) => {
-    try {
-      const memory = JSON.parse(localStorage.getItem('kelan_memberships') || '{}');
-      memory[roomId] = memberId;
-      localStorage.setItem('kelan_memberships', JSON.stringify(memory));
-    } catch { /* storage unavailable */ }
-  };
-
-  useEffect(() => {
-    const today = new Date();
-    const end = new Date(today);
-    end.setDate(today.getDate() + 6);
-    setStartDate(formatDateISO(today));
-    setEndDate(formatDateISO(end));
-    const savedUser = localStorage.getItem(LAST_USER_KEY);
-    if (savedUser) setUserName(savedUser);
-  }, []);
+  const [toast, showToast] = useToast();
 
   const handlePresetChange = (p) => {
     setPreset(p);
-    const base = new Date();
-    if (p === '7') {
-      const end = new Date(base);
-      end.setDate(base.getDate() + 6);
-      setStartDate(formatDateISO(base));
-      setEndDate(formatDateISO(end));
-    } else if (p === '14') {
-      const end = new Date(base);
-      end.setDate(base.getDate() + 13);
-      setStartDate(formatDateISO(base));
-      setEndDate(formatDateISO(end));
+    if (p === '7' || p === '14') {
+      const [start, end] = rangeFromToday(Number(p));
+      setStartDate(start);
+      setEndDate(end);
     }
+  };
+
+  const validate = () => {
+    if (!userName.trim()) return 'Please enter your name!';
+    if (!planName.trim()) return 'Please enter a plan name!';
+    if (!startDate || !endDate) return 'Please pick your dates.';
+    if (endDate < startDate) return 'The end date must be on or after the start date.';
+    const days = (Date.parse(`${endDate}T00:00:00Z`) - Date.parse(`${startDate}T00:00:00Z`)) / 86400000 + 1;
+    if (days > MAX_RANGE_DAYS) return `Plans can cover at most ${MAX_RANGE_DAYS} days.`;
+    if (preferredStart && preferredEnd && preferredEnd <= preferredStart) return 'Preferred hours must end after they start.';
+    return null;
   };
 
   const handleCreatePlan = async (e) => {
     e.preventDefault();
     if (honeypot) return; // Silent rejection for bots
+    const problem = validate();
+    if (problem) { showToast(problem); return; }
     if (!turnstileToken) { showToast('Verifying security connection... please wait a second and try again.'); return; }
-    if (!userName.trim()) { showToast('Please enter your name!'); return; }
-    if (!planName.trim()) { showToast('Please enter a plan name!'); return; }
     setIsLoading(true);
     try {
       const { room, member } = await createRoom({
@@ -85,15 +78,12 @@ export function CreatePage() {
       });
 
       saveDeviceMemberId(room.id, member.id);
-      localStorage.setItem(LAST_USER_KEY, userName.trim());
-      localStorage.setItem(LAST_ROOM_KEY, room.room_code);
-
-      showToast(`Plan created! Room code: ${room.room_code}`);
-      setTimeout(() => navigate(`/room/${room.room_code}`), 350);
+      writeStorage(LAST_USER_KEY, userName.trim());
+      writeStorage(LAST_ROOM_KEY, room.room_code);
+      navigate(`/room/${room.room_code}`);
     } catch (err) {
       console.error('Create plan failed:', err);
-      showToast(`Error: ${err.message || 'Check console for details'}`);
-    } finally {
+      showToast(err.message || 'Could not create the plan. Please try again.');
       // Turnstile tokens are single-use; get a fresh one for any retry.
       setTurnstileToken(null);
       turnstileRef.current?.reset();
@@ -103,36 +93,36 @@ export function CreatePage() {
 
   const handleJoinPlan = async (e) => {
     e.preventDefault();
-    const raw = joinCode.trim().toUpperCase();
+    const raw = joinCode.trim().toUpperCase().replace(/\s+/g, '');
     if (!raw) return;
     const code = raw.startsWith('KLTY-') ? raw : `KLTY-${raw}`;
+    if (!/^KLTY-[A-Z0-9]{3,10}$/.test(code)) { showToast('That room code does not look right.'); return; }
     setIsLoading(true);
     try {
       const room = await getRoomByCode(code);
       if (room) {
-        localStorage.setItem(LAST_ROOM_KEY, room.room_code);
+        writeStorage(LAST_ROOM_KEY, room.room_code);
         navigate(`/room/${room.room_code}`);
-      } else {
-        showToast('Room not found or link is invalid.');
+        return;
       }
+      showToast('Room not found or link is invalid.');
     } catch {
       showToast('Error loading room.');
-    } finally {
-      setIsLoading(false);
     }
+    setIsLoading(false);
   };
 
   return (
     <>
       <Navbar />
-      {toastMessage && <div className="toast">{toastMessage}</div>}
+      <Toast message={toast} />
       {isLoading && (
-        <div className="loading-overlay">
-          <div className="loading-spinner"></div>
+        <div className="loading-overlay" role="status">
+          <div className="loading-spinner" />
           <span className="loading-text">Loading...</span>
         </div>
       )}
-      <main>
+      <main className="page-main">
         <CreateView
           creatorName={userName}
           setCreatorName={setUserName}
@@ -148,6 +138,7 @@ export function CreatePage() {
           setJoinCode={setJoinCode}
           handleCreatePlan={handleCreatePlan}
           handleJoinPlan={handleJoinPlan}
+          isSubmitting={isLoading}
           preferredStart={preferredStart}
           setPreferredStart={setPreferredStart}
           preferredEnd={preferredEnd}
@@ -162,4 +153,3 @@ export function CreatePage() {
     </>
   );
 }
-

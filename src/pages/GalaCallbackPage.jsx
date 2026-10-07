@@ -1,61 +1,57 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getSession, getOrCreateProfile } from '../services/authService.js';
+import { getSession, takeNextPath } from '../services/authService.js';
+import { getMe } from '../services/galaService.js';
+
+function readAuthError() {
+  const hash = new URLSearchParams(window.location.hash.slice(1));
+  const query = new URLSearchParams(window.location.search);
+  return hash.get('error_description') || query.get('error_description');
+}
 
 /**
  * Route: /gala/callback
- * Supabase redirects here after the user clicks the magic link.
- * On mount: reads the session, ensures a profile exists, then redirects to /gala/dashboard.
+ * Supabase redirects here after the magic link is clicked. supabase-js reads
+ * the session from the URL while it initialises, and getSession() waits for that.
  */
 export function GalaCallbackPage() {
   const navigate = useNavigate();
   const [statusText, setStatusText] = useState('Verifying your link…');
+  const [failed, setFailed] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
+    let timer;
 
-    const handleCallback = async () => {
-      try {
-        // Supabase sets the session from the URL hash automatically.
-        // Give it a brief moment to process the hash params.
-        await new Promise((r) => setTimeout(r, 600));
-
-        setStatusText('Saving your spot…');
-        const session = await getSession();
-
-        if (!session) {
-          // The link may have expired or already been used
-          setStatusText('Link expired or already used. Redirecting…');
-          setTimeout(() => {
-            if (!cancelled) navigate('/gala', { replace: true });
-          }, 2000);
-          return;
-        }
-
-        await getOrCreateProfile(session);
-
-        if (!cancelled) {
-          setStatusText('All set! Heading to your dashboard…');
-          navigate('/gala/dashboard', { replace: true });
-        }
-      } catch (err) {
-        console.error(err);
-        if (!cancelled) {
-          setStatusText('Something went wrong. Redirecting…');
-          setTimeout(() => navigate('/gala', { replace: true }), 2000);
-        }
-      }
+    const fail = (message) => {
+      setFailed(true);
+      setStatusText(message);
+      timer = setTimeout(() => navigate('/gala', { replace: true }), 3500);
     };
 
-    handleCallback();
-    return () => { cancelled = true; };
+    (async () => {
+      const authError = readAuthError();
+      const session = await getSession().catch(() => null);
+      if (cancelled) return;
+      if (!session) {
+        fail(authError ? `${authError}. Please request a new link.` : 'This link expired or was already used. Please request a new one.');
+        return;
+      }
+      setStatusText('Saving your spot…');
+      // Creates the profile on first sign-in; the dashboard retries if this fails.
+      await getMe().catch(() => {});
+      if (!cancelled) navigate(takeNextPath(), { replace: true });
+    })();
+
+    return () => { cancelled = true; clearTimeout(timer); };
   }, [navigate]);
 
   return (
-    <main className="gala-callback-page">
-      <div className="gala-callback-inner">
-        <div className="loading-spinner" />
+    <main className="page-main gala-callback-page">
+      <div className="gala-callback-inner" role="status">
+        {failed ? <div className="gala-callback-icon" aria-hidden="true">!</div> : <div className="loading-spinner" />}
         <p className="loading-text">{statusText}</p>
+        {failed && <p className="gala-section-sub">Taking you back so you can try again…</p>}
       </div>
     </main>
   );

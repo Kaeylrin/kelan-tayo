@@ -1,4 +1,4 @@
-import React from 'react';
+import { Reveal } from '../shared/Reveal.jsx';
 
 /**
  * HowItWorksSection — three alternating image/text steps.
@@ -12,13 +12,13 @@ import React from 'react';
 export function HowItWorksSection() {
   return (
     <section className="how-it-works" id="how-it-works">
-      <div className="section-heading">
+      <Reveal className="section-heading">
         <div className="section-eyebrow">See how it works</div>
         <h2 className="display">Three steps. That's it.</h2>
-      </div>
+      </Reveal>
 
       {/* Step 1 — Create */}
-      <div className="step">
+      <Reveal className="step">
         <div className="step-text">
           <div className="step-number">1</div>
           <h3 className="display">Create</h3>
@@ -30,15 +30,18 @@ export function HowItWorksSection() {
         </div>
         <div className="step-image">
           <img
-            src="/screenshots/kelan-tayo-create.png"
+            src="/screenshots/kelan-tayo-create.webp"
+            width={1280}
+            height={765}
+            decoding="async"
             alt="Create a plan screen"
             loading="lazy"
           />
         </div>
-      </div>
+      </Reveal>
 
       {/* Step 2 — Mark schedule */}
-      <div className="step">
+      <Reveal className="step">
         <div className="step-text">
           <div className="step-number">2</div>
           <h3 className="display">Mark schedule</h3>
@@ -50,15 +53,18 @@ export function HowItWorksSection() {
         </div>
         <div className="step-image">
           <img
-            src="/screenshots/kelan-tayo-mark-schedule.png"
+            src="/screenshots/kelan-tayo-mark-schedule.webp"
+            width={1280}
+            height={765}
+            decoding="async"
             alt="Mark your schedule screen"
             loading="lazy"
           />
         </div>
-      </div>
+      </Reveal>
 
       {/* Step 3 — Dashboard */}
-      <div className="step">
+      <Reveal className="step">
         <div className="step-text">
           <div className="step-number">3</div>
           <h3 className="display">Dashboard</h3>
@@ -70,12 +76,15 @@ export function HowItWorksSection() {
         </div>
         <div className="step-image">
           <img
-            src="/screenshots/kelan-tayo-dashboard.png"
+            src="/screenshots/kelan-tayo-dashboard.webp"
+            width={1280}
+            height={765}
+            decoding="async"
             alt="Dashboard screen showing best dates"
             loading="lazy"
           />
         </div>
-      </div>
+      </Reveal>
     </section>
   );
 }

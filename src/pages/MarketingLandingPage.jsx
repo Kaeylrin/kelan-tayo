@@ -1,5 +1,3 @@
-import React, { useState } from 'react';
-
 // Landing section components
 import { HeroSection }        from '../components/landing/HeroSection.jsx';
 import { StatsSection }       from '../components/landing/StatsSection.jsx';

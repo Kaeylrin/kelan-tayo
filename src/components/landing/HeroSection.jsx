@@ -1,14 +1,10 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
+import { scrollToTarget } from '../../utils/smoothScroll.js';
 
-/**
- * HeroSection — above-the-fold landing hero.
- * Props:
- *   onCreatePlan  function  optional callback when primary CTA is clicked
- */
-export function HeroSection({ onCreatePlan }) {
+/** HeroSection — above-the-fold landing hero. */
+export function HeroSection() {
   return (
-    <section className="hero">
+    <section className="hero hero-animate">
       <span className="eyebrow">para hindi na tayo mag drawing</span>
       <h1 className="display">Find the day everyone's actually free.</h1>
       <p>
@@ -17,7 +13,7 @@ export function HeroSection({ onCreatePlan }) {
         busy.
       </p>
       <div className="hero-ctas">
-        <Link to="/create" className="btn-primary" onClick={onCreatePlan}>
+        <Link to="/create" className="btn-primary">
           Create a plan
         </Link>
         <a
@@ -26,7 +22,7 @@ export function HeroSection({ onCreatePlan }) {
           onClick={(e) => {
             e.preventDefault();
             const target = document.getElementById('how-it-works');
-            if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            if (target) scrollToTarget(target, { offset: -96 });
           }}
         >
           See how it works

@@ -1,12 +1,7 @@
-import React, { useEffect } from 'react';
 import { Navbar } from '../components/shared/Navbar.jsx';
 import { Footer } from '../components/shared/Footer.jsx';
 
 export function ChangelogPage() {
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
-
   return (
     <>
       <Navbar />
@@ -20,6 +15,49 @@ export function ChangelogPage() {
         </div>
 
         <div className="changelog-list">
+          {/* Version 1.5.0 */}
+          <div className="changelog-item">
+            <div className="changelog-meta">
+              <h2>v1.5.0</h2>
+              <span className="changelog-date">October 7, 2026</span>
+            </div>
+            <div className="changelog-content">
+              <div className="changelog-group">
+                <span className="badge added">ADDED</span>
+                <ul>
+                  <li><strong>Regular Gala, fully working:</strong> Create a gala, invite your crew with a link, mark your usual week, see the best recurring times, and confirm one or more days as the regular schedule.</li>
+                  <li><strong>Upcoming sessions:</strong> Confirmed galas show the next few dates, with skipped days, extra sessions and who's out already applied.</li>
+                  <li><strong>Exceptions for everyone:</strong> The owner can skip or add a session for the whole crew, and any member can mark a date they can't make.</li>
+                  <li><strong>Pause controls:</strong> Pause just yourself or the whole gala without losing any schedules.</li>
+                  <li><strong>Invite links:</strong> Opening a gala link while signed out takes you through "Save your spot" and straight back to the gala.</li>
+                  <li><strong>Smooth scrolling and motion:</strong> Mouse-wheel scrolling now glides, pages fade between each other, and sections ease in as you scroll. Everything respects your device's reduced-motion setting.</li>
+                  <li>A proper 404 page for broken links, and a leave confirmation before you leave a plan.</li>
+                </ul>
+              </div>
+              <div className="changelog-group">
+                <span className="badge changed">CHANGED</span>
+                <ul>
+                  <li><strong>Locked-down Regular Gala:</strong> Every gala read and write now goes through our secure server with your signed-in session. Other members see your display name, never your email.</li>
+                  <li><strong>Faster loading:</strong> Pages now load on demand, the landing page ships less than half the JavaScript it used to, and screenshots and photos are about 80% smaller.</li>
+                  <li>Added stricter browser security headers (Content Security Policy, HSTS).</li>
+                  <li>Restyled the Privacy and Terms pages, the Regular Gala landing page and every Regular Gala screen.</li>
+                </ul>
+              </div>
+              <div className="changelog-group">
+                <span className="badge fixed">FIXED</span>
+                <ul>
+                  <li>Fixed creating and listing Regular Galas, which always failed before.</li>
+                  <li>Fixed locked-in plans saving afternoon and evening times as morning times (e.g. 8 PM saved as 8 AM).</li>
+                  <li>Fixed two members with the same name being merged into one on the dashboard.</li>
+                  <li>Fixed the "responded" counter always showing 0 and the share box showing a broken link.</li>
+                  <li>Schedule grids now open at 8 AM instead of scrolling past it.</li>
+                  <li>Fixed a large empty gap at the top of the Regular Gala page and the missing card background on Privacy and Terms.</li>
+                  <li>Fixed the "How it works" steps alternating in the wrong order.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
           {/* Version 1.4.0 */}
           <div className="changelog-item">
             <div className="changelog-meta">

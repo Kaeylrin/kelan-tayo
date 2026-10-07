@@ -1,286 +1,226 @@
-import React, { useMemo, useState } from 'react';
-import { confirmGalaPattern } from '../../services/galaService.js';
+import { Fragment, useMemo, useState } from 'react';
+import { confirmGalaPattern, unconfirmGalaPattern } from '../../services/galaService.js';
+import {
+  WEEKDAYS, WEEKDAYS_FULL, computeWeeklyOverlap, findBestWindows, formatWindow, formatHourShort,
+} from '../../utils/galaSchedule.js';
+import { ConfirmDialog } from '../shared/Modals.jsx';
 
-const WEEKDAY_NAMES = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-const WEEKDAY_SHORT = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+function heatColor(free, total) {
+  if (total === 0 || free === 0) return 'var(--heat-0)';
+  if (free === total) return 'var(--gold)';
+  return `rgba(255, 198, 75, ${Math.max(0.18, (free / total) * 0.75).toFixed(2)})`;
+}
 
 /**
- * Calculates the best recurring time slots by aggregating all members'
- * gala_patterns and finding which weekday+hour has the most members free.
- *
- * Props:
- *  - galaId
- *  - patterns: gala_patterns rows from Supabase (with profiles embedded)
- *  - memberCount: total number of gala members
- *  - gala: the full regular_galas row
- *  - currentProfileId: the viewing user's profile id
- *  - isOwner: boolean
- *  - onConfirmed: callback after successful confirmation
+ * Group overlap for a Regular Gala: ranked recurring windows, a full weekly
+ * heatmap, and (for the owner) confirming or reopening the recurring schedule.
  */
-export function GalaOverlapView({ galaId, patterns, memberCount, gala, currentProfileId, isOwner, onConfirmed }) {
-  const [isConfirming, setIsConfirming] = useState(false);
-  const [confirmMsg, setConfirmMsg] = useState('');
-  const [editMode, setEditMode] = useState(false);
+export function GalaOverlapView({ gala, members, patterns, isOwner, onGalaUpdated, showToast }) {
+  const [selected, setSelected] = useState(() => new Set());
+  const [isWorking, setIsWorking] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [reopenOpen, setReopenOpen] = useState(false);
 
-  // ── Compute free-count heatmap ────────────────────────────────────────────
-  // For each (weekday, hour) slot, count how many unique members are FREE
-  // (i.e., that hour is NOT in their busy_hours for that weekday).
-  const heatmap = useMemo(() => {
-    if (!patterns || patterns.length === 0) return null;
+  const overlap = useMemo(() => computeWeeklyOverlap(patterns, members), [patterns, members]);
+  const windows = useMemo(() => findBestWindows(overlap), [overlap]);
+  const names = useMemo(() => new Map(members.map((m) => [m.profile_id, m.display_name])), [members]);
 
-    // Build a set of unique profile IDs that have submitted patterns
-    const profilesWithPatterns = new Set(patterns.map((p) => p.profile_id));
-    const participantCount = profilesWithPatterns.size;
-    if (participantCount === 0) return null;
+  const responded = new Set(patterns.map((p) => p.profile_id));
+  const waitingOn = members.filter((m) => !m.is_paused && !responded.has(m.profile_id));
+  const pausedCount = members.filter((m) => m.is_paused).length;
+  const total = overlap?.participantIds.length || 0;
+  const isConfirmed = gala.status === 'confirmed';
 
-    // For each weekday, for each hour, count who is busy
-    const busyCounts = Array.from({ length: 7 }, () => new Array(24).fill(0));
-    patterns.forEach((p) => {
-      if (!Array.isArray(p.busy_hours)) return;
-      p.busy_hours.forEach((h) => {
-        busyCounts[p.weekday][h]++;
-      });
+  const toggle = (day) => {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(day)) next.delete(day); else next.add(day);
+      return next;
     });
-
-    // Free count = participantCount - busyCount
-    const freeCounts = busyCounts.map((dayArr) =>
-      dayArr.map((busy) => participantCount - busy)
-    );
-
-    return { freeCounts, participantCount };
-  }, [patterns]);
-
-  // ── Find the best slots (weekday + contiguous free window) ────────────────
-  const bestSlots = useMemo(() => {
-    if (!heatmap) return [];
-
-    const { freeCounts, participantCount } = heatmap;
-    const results = [];
-
-    for (let day = 0; day < 7; day++) {
-      // Find peak free hour for this day
-      let maxFree = 0;
-      let bestStartHour = -1;
-
-      for (let h = 0; h < 24; h++) {
-        if (freeCounts[day][h] > maxFree) {
-          maxFree = freeCounts[day][h];
-          bestStartHour = h;
-        }
-      }
-
-      if (maxFree === 0 || bestStartHour === -1) continue;
-
-      // Extend forward to find the longest contiguous window at this free level
-      let endHour = bestStartHour;
-      while (endHour + 1 < 24 && freeCounts[day][endHour + 1] >= maxFree) {
-        endHour++;
-      }
-
-      results.push({
-        day,
-        startHour: bestStartHour,
-        endHour,
-        freeCount: maxFree,
-        participantCount,
-        pct: Math.round((maxFree / participantCount) * 100),
-      });
-    }
-
-    // Sort by freeCount descending, then pct
-    results.sort((a, b) => b.freeCount - a.freeCount || b.pct - a.pct);
-    return results.slice(0, 5); // Top 5 candidates
-  }, [heatmap]);
-
-  // ── Top pick ──────────────────────────────────────────────────────────────
-  const topPick = bestSlots[0] || null;
-
-  const formatHour = (h) => {
-    if (h === 0) return '12am';
-    if (h < 12) return `${h}am`;
-    if (h === 12) return '12pm';
-    return `${h - 12}pm`;
   };
 
-  // ── Heatmap max for color scaling ──────────────────────────────────────────
-  const heatmapMax = heatmap ? heatmap.participantCount : 1;
-
-  const getHeatColor = (freeCount, max) => {
-    if (max === 0 || freeCount === 0) return 'rgba(246, 241, 231, 0.07)';
-    const ratio = freeCount / max;
-    if (ratio >= 1) return 'var(--gold)';
-    if (ratio >= 0.6) return 'rgba(255, 198, 75, 0.55)';
-    if (ratio >= 0.3) return 'rgba(255, 198, 75, 0.28)';
-    return 'rgba(246, 241, 231, 0.12)';
-  };
-
-  // ── Confirmed state ───────────────────────────────────────────────────────
-  const isConfirmed = gala?.status === 'confirmed' && !editMode;
-  const confirmedDays = gala?.confirmed_days || [];
+  const chosen = windows.filter((w) => selected.has(w.day));
 
   const handleConfirm = async () => {
-    if (!topPick) return;
-    setIsConfirming(true);
-    setConfirmMsg('');
+    setIsWorking(true);
     try {
-      const confirmedDaysPayload = [
-        {
-          weekday: topPick.day,
-          startHour: topPick.startHour,
-          endHour: topPick.endHour,
-        },
-      ];
-      await confirmGalaPattern(galaId, currentProfileId, confirmedDaysPayload);
-      setConfirmMsg('Pattern confirmed! ✓');
-      setEditMode(false);
-      if (onConfirmed) onConfirmed();
-      setTimeout(() => setConfirmMsg(''), 3000);
+      const { gala: updated } = await confirmGalaPattern(
+        gala.id,
+        chosen.map(({ day, startHour, endHour }) => ({ weekday: day, startHour, endHour })),
+      );
+      setSelected(new Set());
+      setConfirmOpen(false);
+      showToast('Recurring schedule confirmed!');
+      onGalaUpdated(updated);
     } catch (err) {
-      console.error(err);
-      setConfirmMsg('Error confirming pattern.');
+      showToast(err.message || 'Could not confirm the schedule.');
     } finally {
-      setIsConfirming(false);
+      setIsWorking(false);
     }
   };
 
-  if (!patterns || patterns.length === 0) {
-    return (
-      <div className="gala-overlap-view">
-        <h3 className="display gala-section-title">Best Times</h3>
-        <div className="gala-empty-state">
-          <p>No schedules submitted yet. Members need to fill in their weekly availability first.</p>
-        </div>
-      </div>
-    );
-  }
+  const handleReopen = async () => {
+    setIsWorking(true);
+    try {
+      const { gala: updated } = await unconfirmGalaPattern(gala.id);
+      setReopenOpen(false);
+      showToast('Schedule reopened. Pick new days anytime.');
+      onGalaUpdated(updated);
+    } catch (err) {
+      showToast(err.message || 'Could not reopen the schedule.');
+    } finally {
+      setIsWorking(false);
+    }
+  };
 
   return (
-    <div className="gala-overlap-view">
+    <section className="gala-panel gala-overlap-view">
       <div className="gala-section-header">
         <div>
-          <h3 className="display gala-section-title">Best Recurring Times</h3>
+          <h2 className="display gala-section-title">Best recurring times</h2>
           <p className="gala-section-sub">
-            Based on {heatmap?.participantCount || 0} member{heatmap?.participantCount !== 1 ? 's' : ''} &bull; Brighter = more people free
+            {total === 0
+              ? 'Waiting for schedules.'
+              : `Based on ${total} member${total === 1 ? '' : 's'}${pausedCount ? ` · ${pausedCount} paused and not counted` : ''}.`}
           </p>
         </div>
-        {isConfirmed && isOwner && !editMode && (
-          <button className="btn-secondary btn-compact" onClick={() => setEditMode(true)}>
-            Edit Pattern
+        {isConfirmed && isOwner && (
+          <button className="btn-secondary btn-compact" type="button" onClick={() => setReopenOpen(true)}>
+            Change schedule
           </button>
         )}
       </div>
 
-      {/* Confirmed banner */}
-      {isConfirmed && confirmedDays.length > 0 && (
-        <div className="gala-confirmed-banner">
-          <span className="gala-confirmed-icon">✓</span>
-          <div>
-            <div className="gala-confirmed-label">Confirmed Regular Gala Schedule</div>
-            {confirmedDays.map((cd, i) => (
-              <div key={i} className="gala-confirmed-slot">
-                Every <strong>{WEEKDAY_NAMES[cd.weekday]}</strong>,&nbsp;
-                {formatHour(cd.startHour)}–{formatHour(cd.endHour + 1)}
-              </div>
-            ))}
-          </div>
+      {waitingOn.length > 0 && (
+        <div className="gala-notice">
+          Still waiting on <strong>{waitingOn.map((m) => m.display_name).join(', ')}</strong> to save their week.
         </div>
       )}
 
-      {/* Top pick card */}
-      {topPick && (!isConfirmed || editMode) && (
-        <div className="gala-best-pick">
-          <div className="best-badge">Best match</div>
-          <div className="gala-pick-day display">{WEEKDAY_NAMES[topPick.day]}</div>
-          <div className="gala-pick-time">
-            {formatHour(topPick.startHour)}–{formatHour(topPick.endHour + 1)}
-          </div>
-          <div className="gala-pick-free">
-            {topPick.freeCount} of {topPick.participantCount} member{topPick.participantCount !== 1 ? 's' : ''} free ({topPick.pct}%)
-          </div>
-          {isOwner && (
+      {!overlap ? (
+        <div className="gala-empty-state">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+            <path d="M3 10h18M7 3v4M17 3v4M5 6h14a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2Z" />
+          </svg>
+          <p>No schedules yet. Once members save their usual week, the best recurring times show up here.</p>
+        </div>
+      ) : (
+        <>
+          {!isConfirmed && (
+            windows.length === 0 ? (
+              <div className="gala-empty-state gala-empty-sm">
+                <p>Nobody is free at the same time yet. Ask the crew to double-check their weeks.</p>
+              </div>
+            ) : (
+              <div className="gala-windows">
+                {windows.map((w, i) => {
+                  const isSelected = selected.has(w.day);
+                  const freeNames = overlap.freeBySlot[w.day][w.startHour].map((id) => names.get(id));
+                  const Tag = isOwner ? 'button' : 'div';
+                  return (
+                    <Tag
+                      key={w.day}
+                      type={isOwner ? 'button' : undefined}
+                      className={`gala-window ${i === 0 ? 'is-top' : ''} ${isSelected ? 'is-selected' : ''} ${isOwner ? 'is-clickable' : ''}`}
+                      onClick={isOwner ? () => toggle(w.day) : undefined}
+                      aria-pressed={isOwner ? isSelected : undefined}
+                      style={{ '--i': i }}
+                    >
+                      <div className="gala-window-top">
+                        <span className="gala-window-day display">{WEEKDAYS_FULL[w.day]}</span>
+                        {i === 0 && <span className="best-badge">Best match</span>}
+                        {isOwner && <span className="gala-window-check" aria-hidden="true">{isSelected ? '✓' : ''}</span>}
+                      </div>
+                      <div className="gala-window-time">{formatWindow(w.startHour, w.endHour)} · {w.hours}h</div>
+                      <div className="gala-window-bar"><span style={{ width: `${w.pct}%` }} /></div>
+                      <div className="gala-window-free">
+                        {w.freeCount} of {total} free ({w.pct}%)
+                        {w.freeCount < total && <span title={freeNames.join(', ')}> · {freeNames.slice(0, 3).join(', ')}{freeNames.length > 3 ? '…' : ''}</span>}
+                      </div>
+                    </Tag>
+                  );
+                })}
+              </div>
+            )
+          )}
+
+          {!isConfirmed && isOwner && windows.length > 0 && (
             <div className="gala-confirm-row">
-              {confirmMsg && <span className="gala-save-msg">{confirmMsg}</span>}
-              <button
-                className="btn-primary"
-                style={{ width: 'auto', padding: '9px 22px' }}
-                onClick={handleConfirm}
-                disabled={isConfirming}
-              >
-                {isConfirming ? 'Confirming…' : '✓ Confirm this pattern'}
+              <span className="gala-section-sub">
+                {chosen.length === 0 ? 'Pick one or more days to make them the regular schedule.' : `${chosen.length} day${chosen.length === 1 ? '' : 's'} selected`}
+              </span>
+              <button className="btn-primary btn-inline" type="button" disabled={chosen.length === 0} onClick={() => setConfirmOpen(true)}>
+                Confirm schedule
               </button>
             </div>
           )}
-        </div>
-      )}
+          {!isConfirmed && !isOwner && windows.length > 0 && (
+            <p className="gala-section-sub gala-owner-hint">The gala owner picks the final days from these options.</p>
+          )}
 
-      {/* Other candidates */}
-      {bestSlots.length > 1 && (!isConfirmed || editMode) && (
-        <div className="gala-candidates">
-          <div className="gala-candidates-label">Other good times</div>
-          {bestSlots.slice(1).map((slot, i) => (
-            <div key={i} className="gala-candidate-row">
-              <span className="gala-candidate-day">{WEEKDAY_SHORT[slot.day]}</span>
-              <span className="gala-candidate-time">
-                {formatHour(slot.startHour)}–{formatHour(slot.endHour + 1)}
+          <div className="gala-mini-heatmap">
+            <div className="gala-mini-heatmap-head">
+              <span className="gala-mini-heatmap-label">Full weekly heatmap</span>
+              <span className="legend-inline">
+                <span className="legend-swatch swatch-0" /> none
+                <span className="legend-swatch swatch-some" /> some
+                <span className="legend-swatch swatch-all" /> everyone
               </span>
-              <div className="gala-candidate-bar-wrap">
-                <div
-                  className="gala-candidate-bar"
-                  style={{ width: `${slot.pct}%` }}
-                />
-              </div>
-              <span className="gala-candidate-pct">{slot.pct}%</span>
             </div>
-          ))}
-        </div>
+            <div className="gala-mini-heatmap-scroll" data-lenis-prevent>
+              <div className="gala-mini-grid">
+                <div />
+                {WEEKDAYS.map((d) => <div key={d} className="gala-mini-day">{d}</div>)}
+                {Array.from({ length: 24 }, (_, h) => (
+                  <Fragment key={h}>
+                    <div className="gala-mini-hour">{h % 3 === 0 ? formatHourShort(h) : ''}</div>
+                    {WEEKDAYS.map((_, d) => {
+                      const free = overlap.freeCounts[d][h];
+                      const freeNames = overlap.freeBySlot[d][h].map((id) => names.get(id));
+                      return (
+                        <div
+                          key={d}
+                          className="gala-mini-cell"
+                          style={{ background: heatColor(free, total) }}
+                          title={`${WEEKDAYS_FULL[d]} ${formatHourShort(h)}: ${free}/${total} free${freeNames.length ? ` (${freeNames.join(', ')})` : ''}`}
+                        />
+                      );
+                    })}
+                  </Fragment>
+                ))}
+              </div>
+            </div>
+          </div>
+        </>
       )}
 
-      {/* Mini heatmap (weekday × 24h grid) */}
-      {heatmap && (!isConfirmed || editMode) && (
-        <div className="gala-mini-heatmap">
-          <div className="gala-mini-heatmap-label">Full weekly heatmap</div>
-          <div className="gala-mini-heatmap-scroll">
-            <div
-              className="gala-mini-grid"
-              style={{ gridTemplateColumns: `40px repeat(7, 1fr)` }}
-            >
-              {/* Header */}
-              <div />
-              {WEEKDAY_SHORT.map((d) => (
-                <div key={d} className="weekly-header" style={{ fontSize: '11px' }}>{d}</div>
-              ))}
-              {/* Hour rows — only show every 2 hours to keep it compact */}
-              {Array.from({ length: 24 }, (_, h) => (
-                <React.Fragment key={h}>
-                  <div className="time-label" style={{ fontSize: '10px', height: '16px' }}>
-                    {h % 3 === 0 ? (h === 0 ? '12a' : h < 12 ? `${h}a` : h === 12 ? '12p' : `${h - 12}p`) : ''}
-                  </div>
-                  {Array.from({ length: 7 }, (_, d) => (
-                    <div
-                      key={d}
-                      className="heat-cell"
-                      style={{
-                        height: '16px',
-                        margin: '1px',
-                        borderRadius: '3px',
-                        background: getHeatColor(heatmap.freeCounts[d][h], heatmapMax),
-                      }}
-                      title={`${WEEKDAY_NAMES[d]} ${formatHour(h)}: ${heatmap.freeCounts[d][h]} free`}
-                    />
-                  ))}
-                </React.Fragment>
-              ))}
-            </div>
-          </div>
-          <div className="gala-heatmap-legend">
-            <span className="legend-swatch swatch-0" style={{ display: 'inline-block', width: 10, height: 10, borderRadius: 2, background: 'rgba(246,241,231,0.07)', marginRight: 4 }} />None free
-            &nbsp;&nbsp;
-            <span className="legend-swatch" style={{ display: 'inline-block', width: 10, height: 10, borderRadius: 2, background: 'rgba(255,198,75,0.28)', marginRight: 4 }} />Some free
-            &nbsp;&nbsp;
-            <span className="legend-swatch swatch-all" style={{ display: 'inline-block', width: 10, height: 10, borderRadius: 2, background: 'var(--gold)', marginRight: 4 }} />All free
-          </div>
-        </div>
+      {confirmOpen && (
+        <ConfirmDialog
+          title="Confirm the regular schedule?"
+          confirmLabel="Confirm"
+          busy={isWorking}
+          onClose={() => setConfirmOpen(false)}
+          onConfirm={handleConfirm}
+        >
+          <p>Your crew will meet every:</p>
+          <ul className="modal-list">
+            {chosen.map((w) => <li key={w.day}><strong>{WEEKDAYS_FULL[w.day]}</strong>, {formatWindow(w.startHour, w.endHour)}</li>)}
+          </ul>
+          <p className="modal-subtext">It repeats every week until you change it. Use exceptions for one-off breaks.</p>
+        </ConfirmDialog>
       )}
-    </div>
+
+      {reopenOpen && (
+        <ConfirmDialog
+          title="Change the schedule?"
+          confirmLabel="Reopen schedule"
+          busy={isWorking}
+          onClose={() => setReopenOpen(false)}
+          onConfirm={handleReopen}
+        >
+          <p>This clears the confirmed days so you can pick new ones. Everyone's saved weeks stay as they are.</p>
+        </ConfirmDialog>
+      )}
+    </section>
   );
 }

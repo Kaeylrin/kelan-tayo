@@ -1,260 +1,65 @@
 import { supabase } from '../utils/supabaseClient';
+import { postApi } from './apiClient';
 
-// ─── Regular Galas (the "room" equivalent) ────────────────────────────────────
+// Every Regular Gala read and write goes through /api/gala, signed with the
+// visitor's magic-link session. The gala tables are closed to the public key.
 
-/**
- * Creates a new Regular Gala owned by the given profile.
- * @param {string} profileId - UUID of the owning profile
- * @param {string} name - Display name of the gala
- * @param {string} startDate - ISO date string (YYYY-MM-DD)
- * @param {string|null} endDate - Optional ISO date string
- */
-export async function createGala(profileId, name, startDate, endDate = null) {
-  const { data, error } = await supabase
-    .from('regular_galas')
-    .insert({
-      owner_id: profileId,
-      name: name.trim(),
-      start_date: startDate,
-      end_date: endDate || null,
-      status: 'active',
-      is_paused: false,
-    })
-    .select()
-    .single();
-
-  if (error) throw error;
-
-  // Auto-join as a member
-  await joinGala(data.id, profileId);
-
-  return data;
+async function callGala(action, params = {}) {
+  const { data } = await supabase.auth.getSession();
+  const token = data.session?.access_token;
+  if (!token) {
+    const error = new Error('Please save your spot again to continue.');
+    error.status = 401;
+    throw error;
+  }
+  return postApi('gala', { action, ...params }, { Authorization: `Bearer ${token}` });
 }
 
-/**
- * Lists all Regular Galas that the given profile is a member of.
- * @param {string} profileId
- */
-export async function listMyGalas(profileId) {
-  const { data, error } = await supabase
-    .from('gala_members')
-    .select('gala_id, regular_galas(*)')
-    .eq('profile_id', profileId)
-    .order('created_at', { ascending: false });
+/** Returns { profile } for the signed-in visitor, creating the profile on first use. */
+export const getMe = () => callGala('me');
 
-  if (error) throw error;
-  return (data || []).map((row) => row.regular_galas).filter(Boolean);
-}
+/** Returns { profile }. */
+export const updateDisplayName = (displayName) => callGala('updateProfile', { displayName });
+
+/** Returns { profile, galas } — every gala the visitor belongs to. */
+export const listMyGalas = () => callGala('list');
 
 /**
- * Fetches a single Regular Gala by ID, including member count.
- * @param {string} galaId
+ * Returns { profile, gala, isMember, isOwner, ownerName, memberCount } and,
+ * for members, also { members, patterns, exceptions }.
  */
-export async function getGala(galaId) {
-  const { data, error } = await supabase
-    .from('regular_galas')
-    .select('*, gala_members(count)')
-    .eq('id', galaId)
-    .single();
+export const loadGala = (galaId) => callGala('load', { galaId });
 
-  if (error) throw error;
-  return data;
-}
+/** Returns { gala }. endDate is optional. */
+export const createGala = (name, startDate, endDate) =>
+  callGala('create', { name, startDate, endDate: endDate || null });
 
-// ─── Membership ───────────────────────────────────────────────────────────────
+export const joinGala = (galaId) => callGala('join', { galaId });
+export const leaveGala = (galaId) => callGala('leave', { galaId });
+export const deleteGala = (galaId) => callGala('remove', { galaId });
 
 /**
- * Adds a profile as a member of a Regular Gala.
- * Safe to call if already a member (upserts by conflict).
- * @param {string} galaId
- * @param {string} profileId
+ * Saves the visitor's busy hours for all seven weekdays in one request.
+ * @param {Object<number, number[]>} patterns - { 0: [busy hours], ..., 6: [...] }, 0 = Monday
  */
-export async function joinGala(galaId, profileId) {
-  const { data, error } = await supabase
-    .from('gala_members')
-    .upsert(
-      { gala_id: galaId, profile_id: profileId, is_paused: false },
-      { onConflict: 'gala_id,profile_id', ignoreDuplicates: false }
-    )
-    .select()
-    .single();
+export const saveWeeklyPatterns = (galaId, patterns) => callGala('savePatterns', { galaId, patterns });
 
-  if (error) throw error;
-  return data;
-}
+/** Owner only. days: [{ weekday, startHour, endHour }] with endHour inclusive. Returns { gala }. */
+export const confirmGalaPattern = (galaId, days) => callGala('confirm', { galaId, days });
+
+/** Owner only. Returns { gala }. */
+export const unconfirmGalaPattern = (galaId) => callGala('unconfirm', { galaId });
+
+/** Owner only. Returns { gala }. */
+export const setGalaPaused = (galaId, paused) => callGala('pauseGala', { galaId, paused });
+
+export const setMemberPaused = (galaId, paused) => callGala('pauseMember', { galaId, paused });
 
 /**
- * Lists all members of a Regular Gala, including their profile details.
- * @param {string} galaId
+ * @param {'skip'|'add'} type
+ * @param {'gala'|'me'} scope - gala-wide (owner only) or just the visitor
  */
-export async function listGalaMembers(galaId) {
-  const { data, error } = await supabase
-    .from('gala_members')
-    .select('*, profiles(id, display_name, email)')
-    .eq('gala_id', galaId);
+export const addException = (galaId, { date, type, scope, note }) =>
+  callGala('addException', { galaId, date, type, scope, note: note || '' });
 
-  if (error) throw error;
-  return data || [];
-}
-
-// ─── Weekly Patterns ──────────────────────────────────────────────────────────
-
-/**
- * Upserts a member's weekly busy pattern for one weekday.
- * @param {string} galaId
- * @param {string} profileId
- * @param {number} weekday - 0=Mon … 6=Sun
- * @param {number[]} busyHours - array of 0-23 hour indices
- */
-export async function saveWeeklyPattern(galaId, profileId, weekday, busyHours) {
-  const { data, error } = await supabase
-    .from('gala_patterns')
-    .upsert(
-      {
-        gala_id: galaId,
-        profile_id: profileId,
-        weekday,
-        busy_hours: busyHours,
-      },
-      { onConflict: 'gala_id,profile_id,weekday' }
-    )
-    .select()
-    .single();
-
-  if (error) throw error;
-  return data;
-}
-
-/**
- * Fetches all gala_patterns rows for a given gala (all members, all weekdays).
- * @param {string} galaId
- */
-export async function getGalaPatterns(galaId) {
-  const { data, error } = await supabase
-    .from('gala_patterns')
-    .select('*, profiles(id, display_name)')
-    .eq('gala_id', galaId);
-
-  if (error) throw error;
-  return data || [];
-}
-
-// ─── Confirmation ─────────────────────────────────────────────────────────────
-
-/**
- * Owner confirms the recurring pattern for a Regular Gala.
- * Writes the confirmed days to the regular_galas row and marks status as confirmed.
- * @param {string} galaId
- * @param {string} ownerId - Must match the gala's owner_id
- * @param {object[]} confirmedDays - Array of { weekday, startHour, endHour }
- */
-export async function confirmGalaPattern(galaId, ownerId, confirmedDays) {
-  const { data, error } = await supabase
-    .from('regular_galas')
-    .update({
-      confirmed_days: confirmedDays,
-      status: 'confirmed',
-    })
-    .eq('id', galaId)
-    .eq('owner_id', ownerId)
-    .select()
-    .single();
-
-  if (error) throw error;
-  return data;
-}
-
-// ─── Pause Controls ───────────────────────────────────────────────────────────
-
-/**
- * Owner toggles the entire gala's paused state.
- * @param {string} galaId
- * @param {string} ownerId
- * @param {boolean} isPaused
- */
-export async function toggleGalaPause(galaId, ownerId, isPaused) {
-  const { data, error } = await supabase
-    .from('regular_galas')
-    .update({ is_paused: isPaused })
-    .eq('id', galaId)
-    .eq('owner_id', ownerId)
-    .select()
-    .single();
-
-  if (error) throw error;
-  return data;
-}
-
-/**
- * A member toggles their own attendance pause.
- * @param {string} galaId
- * @param {string} profileId
- * @param {boolean} isPaused
- */
-export async function toggleMemberPause(galaId, profileId, isPaused) {
-  const { data, error } = await supabase
-    .from('gala_members')
-    .update({ is_paused: isPaused })
-    .eq('gala_id', galaId)
-    .eq('profile_id', profileId)
-    .select()
-    .single();
-
-  if (error) throw error;
-  return data;
-}
-
-// ─── Exceptions ───────────────────────────────────────────────────────────────
-
-/**
- * Adds a one-off exception (skip or add) for a specific date.
- * @param {string} galaId
- * @param {string} profileId - The member adding the exception
- * @param {string} date - ISO date string (YYYY-MM-DD)
- * @param {'Skip'|'Add'} type - Whether to skip or add a session on this date
- * @param {string} [note] - Optional note for context
- */
-export async function addException(galaId, profileId, date, type, note = '') {
-  const { data, error } = await supabase
-    .from('gala_exceptions')
-    .insert({
-      gala_id: galaId,
-      profile_id: profileId,
-      date,
-      type,
-      note: note.trim() || null,
-    })
-    .select()
-    .single();
-
-  if (error) throw error;
-  return data;
-}
-
-/**
- * Deletes an exception by its UUID.
- * @param {string} exceptionId
- */
-export async function deleteException(exceptionId) {
-  const { error } = await supabase
-    .from('gala_exceptions')
-    .delete()
-    .eq('id', exceptionId);
-
-  if (error) throw error;
-}
-
-/**
- * Fetches all exceptions for a gala, sorted by date ascending.
- * @param {string} galaId
- */
-export async function getExceptions(galaId) {
-  const { data, error } = await supabase
-    .from('gala_exceptions')
-    .select('*, profiles(id, display_name)')
-    .eq('gala_id', galaId)
-    .order('date', { ascending: true });
-
-  if (error) throw error;
-  return data || [];
-}
+export const deleteException = (exceptionId) => callGala('deleteException', { exceptionId });

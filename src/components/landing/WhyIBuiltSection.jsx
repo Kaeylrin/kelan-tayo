@@ -1,15 +1,15 @@
-import React from 'react';
+import { Reveal } from '../shared/Reveal.jsx';
 
 export function WhyIBuiltSection() {
   return (
     <section className="story-section">
-      <div className="section-heading">
+      <Reveal className="section-heading">
         <div className="section-eyebrow">Behind the app</div>
         <h2 className="display">Why I built this</h2>
-      </div>
+      </Reveal>
 
       <div className="story-layout">
-        <div className="story-card">
+        <Reveal className="story-card">
           <svg
             className="story-quote-mark"
             viewBox="0 0 24 24"
@@ -48,26 +48,28 @@ export function WhyIBuiltSection() {
 
           <div className="story-signoff">
             <img
-              src="/new_pfp.jpg"
+              src="/new_pfp.webp"
               alt="Wrenier"
               className="story-avatar"
               width={38}
               height={38}
+              loading="lazy"
+              decoding="async"
             />
             <div className="story-signoff-text">
               Wrenier
               <span>creator of Kelan Tayo</span>
             </div>
           </div>
-        </div>
+        </Reveal>
 
-        <div className="story-stat">
+        <Reveal className="story-stat" delay={120}>
           <div className="story-stat-number display">2</div>
           <div className="story-stat-label">
             actual hangouts out of years of planning
           </div>
           <div className="story-stat-sub">That's why this app exists.</div>
-        </div>
+        </Reveal>
       </div>
     </section>
   );

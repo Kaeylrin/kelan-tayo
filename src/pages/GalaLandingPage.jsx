@@ -1,11 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { GalaNavbar } from '../components/gala/GalaNavbar.jsx';
 import { Footer } from '../components/shared/Footer.jsx';
-import { sendMagicLink, getSession } from '../services/authService.js';
+import { sendMagicLink, getSession, isSafeNextPath } from '../services/authService.js';
+
+const EMAIL_RE = /^[^s@]+@[^s@]+.[^s@]+$/;
 
 export function GalaLandingPage() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const next = isSafeNextPath(location.state?.next) ? location.state.next : null;
+  const isInvite = Boolean(next && next !== '/gala/dashboard');
   const [email, setEmail] = useState('');
   const [honeypot, setHoneypot] = useState('');
   const [status, setStatus] = useState('idle');
@@ -13,22 +18,29 @@ export function GalaLandingPage() {
 
   useEffect(() => {
     getSession().then((session) => {
-      if (session) navigate('/gala/dashboard', { replace: true });
+      if (session) navigate(next || '/gala/dashboard', { replace: true });
     });
-  }, [navigate]);
+  }, [navigate, next]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (honeypot) return;
-    const trimmed = email.trim();
-    if (!trimmed) return;
+    const trimmed = email.trim().toLowerCase();
+    if (!EMAIL_RE.test(trimmed) || trimmed.length > 254) {
+      setErrorMsg('Please enter a valid email address.');
+      setStatus('error');
+      return;
+    }
     setStatus('loading');
     setErrorMsg('');
     try {
-      await sendMagicLink(trimmed);
+      await sendMagicLink(trimmed, next);
       setStatus('sent');
     } catch (err) {
-      setErrorMsg(err.message || 'Something went wrong. Please try again.');
+      const rateLimited = err.status === 429 || /rate limit|seconds/i.test(err.message || '');
+      setErrorMsg(rateLimited
+        ? 'Too many links requested. Please wait a minute, then try again.'
+        : err.message || 'Something went wrong. Please try again.');
       setStatus('error');
     }
   };
@@ -38,17 +50,14 @@ export function GalaLandingPage() {
       <GalaNavbar />
 
       <main className="landing-main">
-        <div className="view-content landing-grid-layout" style={{ marginBottom: '100px' }}>
-          
-          <div className="hero" style={{ textAlign: 'left', marginTop: '20px' }}>
-            <div style={{ marginBottom: '12px' }}>
-              <span className="eyebrow" style={{ display: 'inline-block' }}>for the plans you make every week</span>
-            </div>
-            <h1 className="display" style={{ marginBottom: '16px' }}>Same crew. Same vibe. Set it once.</h1>
-            <p style={{ marginBottom: '24px' }}>
+        <div className="view-content landing-grid-layout gala-landing-grid">
+          <div className="hero gala-landing-hero">
+            <span className="eyebrow">for the plans you make every week</span>
+            <h1 className="display">Same crew. Same vibe. Set it once.</h1>
+            <p>
               For the badminton group that plays every Saturday, the tambayan crew that meets every Friday, the study group that grinds every week, stop re-planning the same plan. Set your recurring schedule once and Kelan Tayo tracks who's free every week.
             </p>
-            <div className="gala-chips" style={{ justifyContent: 'flex-start', flexWrap: 'wrap' }}>
+            <div className="gala-chips gala-chips-left">
               <span className="gala-chip">
                 <svg className="chip-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M3 10h18M7 3v4M17 3v4M5 6h14a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2Z"/>
@@ -70,17 +79,19 @@ export function GalaLandingPage() {
             </div>
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+          <div className="gala-landing-card-col">
             <div className="spot-card">
               {status === 'sent' ? (
                 <>
+                  <div className="spot-sent-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 6h16v12H4z" /><path d="m4 7 8 6 8-6" /></svg>
+                  </div>
                   <h3 className="display">Check your email!</h3>
-                  <p>
-                    We sent a magic link to <strong>{email}</strong>. Click it to save your spot and get started.
+                  <p role="status">
+                    We sent a magic link to <strong>{email.trim()}</strong>. Open it on this device to save your spot{isInvite ? ' and join the gala' : ''}.
                   </p>
                   <button
                     className="btn-secondary btn-compact"
-                    style={{ marginTop: '16px' }}
                     onClick={() => { setStatus('idle'); setEmail(''); }}
                   >
                     Use a different email
@@ -88,12 +99,17 @@ export function GalaLandingPage() {
                 </>
               ) : (
                 <>
-                  <h3 className="display">Save your spot</h3>
-                  <p>Enter your email and we'll send you a magic link. No password needed.</p>
+                  <h3 className="display">{isInvite ? "You've been invited!" : 'Save your spot'}</h3>
+                  <p>
+                    {isInvite
+                      ? 'Save your spot with your email to join the gala. We will send a magic link, no password needed.'
+                      : "Enter your email and we'll send you a magic link. No password needed."}
+                  </p>
                   <form onSubmit={handleSubmit}>
-                    <input type="text" name="website" tabIndex={-1} autoComplete="off" style={{ opacity: 0, position: 'absolute', top: 0, left: 0, height: 0, width: 0, zIndex: -1 }} value={honeypot} onChange={(e) => setHoneypot(e.target.value)} />
-                    <span className="spot-label">Email address</span>
+                    <input type="text" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" className="hp-field" value={honeypot} onChange={(e) => setHoneypot(e.target.value)} />
+                    <label className="spot-label" htmlFor="spotEmail">Email address</label>
                     <input
+                      id="spotEmail"
                       className="spot-input"
                       type="email"
                       placeholder="you@example.com"
@@ -104,14 +120,14 @@ export function GalaLandingPage() {
                       disabled={status === 'loading'}
                     />
                     {status === 'error' && (
-                      <p style={{ color: 'var(--coral)', fontSize: '13px', marginBottom: '12px' }}>{errorMsg}</p>
+                      <p className="form-error" role="alert">{errorMsg}</p>
                     )}
                     <button
                       className="spot-btn"
                       type="submit"
                       disabled={status === 'loading'}
                     >
-                      {status === 'loading' ? 'Sending...' : <>Save your spot &rarr;</>}
+                      {status === 'loading' ? 'Sending…' : <>Save your spot &rarr;</>}
                     </button>
                   </form>
                   <div className="spot-note">No account needed. Just an email.</div>
@@ -157,5 +173,3 @@ export function GalaLandingPage() {
     </>
   );
 }
-
-

@@ -2,11 +2,23 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" href="/kelan-tayo-logo.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Kelan Tayo</title>
+    <title>Kelan Tayo · Find the day everyone's actually free</title>
+    <meta name="description" content="Create a plan, share the link, let the barkada mark when they're busy, and Kelan Tayo finds the dates where nobody is. No sign up needed." />
+    <meta name="theme-color" content="#1B3A87" />
+    <meta name="color-scheme" content="dark" />
 
-    <!-- Google Fonts -->
+    <link rel="icon" type="image/png" sizes="64x64" href="/favicon-64.png" />
+    <link rel="apple-touch-icon" href="/kelan-tayo-logo.png" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Kelan Tayo" />
+    <meta property="og:title" content="Kelan Tayo · Find the day everyone's actually free" />
+    <meta property="og:description" content="Stop guessing across endless group chat messages. Mark when you're busy, Kelan Tayo finds when everyone is free." />
+    <meta property="og:image" content="https://kelan-tayo.vercel.app/screenshots/kelan-tayo-dashboard.webp" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="preconnect" href="%VITE_SUPABASE_URL%" crossorigin />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -16,6 +28,7 @@
   </head>
   <body>
     <div id="root"></div>
+    <noscript>Kelan Tayo needs JavaScript to work. Please enable it and reload the page.</noscript>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

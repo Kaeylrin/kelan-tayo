@@ -18,7 +18,8 @@ function clipToPreferredWindow(span, windowStart, windowEnd) {
 
 /**
  * Computes Free Overlap, Best Match, and Backup Windows based on Inverted Schedule.
- * Participants object: { "Mika": ["2026-09-08_14", ...] } where array items are BUSY slots.
+ * Participants object: { memberKey: ["2026-09-08_14", ...] } where array items are BUSY slots.
+ * Keys are returned as-is in freeMembers / missingMembers (callers map them to names).
  * Free slot = slot not in busy list.
  * preferredStart / preferredEnd: "HH:MM" strings (or null for Anytime).
  */
@@ -30,6 +31,8 @@ export function computeFreeOverlap(dates, participants, preferredStart, preferre
     return { bestMatch: null, backupOptions: [], dayScores: [] };
   }
 
+  // Set lookups keep this fast for big rooms (members × dates × 24 hours).
+  const busySets = new Map(memberNames.map((name) => [name, new Set(participants[name] || [])]));
   const allWindows = [];
 
   dates.forEach(d => {
@@ -38,10 +41,7 @@ export function computeFreeOverlap(dates, participants, preferredStart, preferre
 
     for (let h = 0; h < 24; h++) {
       const slotKey = `${dStr}_${h}`;
-      const free = memberNames.filter(name => {
-        const busy = participants[name] || [];
-        return !busy.includes(slotKey);
-      });
+      const free = memberNames.filter((name) => !busySets.get(name).has(slotKey));
       hourFreeMap.push({ hour: h, free, count: free.length });
     }
 
@@ -105,7 +105,6 @@ export function computeFreeOverlap(dates, participants, preferredStart, preferre
 
     // 2. Also check maximal contiguous windows for majority / partial overlap (if not full all day)
     let partialStart = null;
-    let partialMinCount = 0;
     let partialCommon = [];
 
     for (let h = 0; h < 24; h++) {
@@ -113,7 +112,6 @@ export function computeFreeOverlap(dates, participants, preferredStart, preferre
       if (slot.count > 0 && slot.count < totalMembers) {
         if (partialStart === null) {
           partialStart = h;
-          partialMinCount = slot.count;
           partialCommon = [...slot.free];
         } else {
           const intersection = partialCommon.filter(m => slot.free.includes(m));

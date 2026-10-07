@@ -1,15 +1,39 @@
 import { supabase } from '../utils/supabaseClient';
 
+const NEXT_PATH_KEY = 'kelan_gala_next';
+
 /**
  * Sends a magic link to the given email address.
- * Redirects to /gala/callback after the user clicks the link.
+ * Redirects to /gala/callback after the user clicks the link. `next` is an
+ * optional in-app path (e.g. an invite link) to open after signing in; it is
+ * kept in localStorage so the redirect URL stays the one Supabase allows.
  */
-export async function sendMagicLink(email) {
+export async function sendMagicLink(email, next) {
+  try {
+    if (isSafeNextPath(next)) localStorage.setItem(NEXT_PATH_KEY, next);
+    else localStorage.removeItem(NEXT_PATH_KEY);
+  } catch { /* storage unavailable */ }
   const { error } = await supabase.auth.signInWithOtp({
     email,
-    options: { emailRedirectTo: window.location.origin + '/gala/callback' },
+    options: { emailRedirectTo: `${window.location.origin}/gala/callback` },
   });
   if (error) throw error;
+}
+
+/** Returns (and forgets) where to go after signing in. */
+export function takeNextPath() {
+  try {
+    const next = localStorage.getItem(NEXT_PATH_KEY);
+    localStorage.removeItem(NEXT_PATH_KEY);
+    return isSafeNextPath(next) ? next : '/gala/dashboard';
+  } catch {
+    return '/gala/dashboard';
+  }
+}
+
+/** Only same-site /gala paths are allowed as post-login destinations. */
+export function isSafeNextPath(path) {
+  return typeof path === 'string' && /^\/gala\/(dashboard|[0-9a-f-]{36})$/i.test(path);
 }
 
 /**
@@ -18,33 +42,6 @@ export async function sendMagicLink(email) {
 export async function getSession() {
   const { data } = await supabase.auth.getSession();
   return data.session;
-}
-
-/**
- * Finds or creates a profile row for the authenticated user.
- * Uses the email prefix as the default display name.
- */
-export async function getOrCreateProfile(session) {
-  const { data: existing } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('id', session.user.id)
-    .maybeSingle();
-
-  if (existing) return existing;
-
-  const { data, error } = await supabase
-    .from('profiles')
-    .insert({
-      id: session.user.id,
-      email: session.user.email,
-      display_name: session.user.email.split('@')[0],
-    })
-    .select()
-    .single();
-
-  if (error) throw error;
-  return data;
 }
 
 /**

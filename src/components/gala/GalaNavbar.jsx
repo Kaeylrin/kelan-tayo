@@ -1,6 +1,7 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useScrollPosition } from '../../hooks/useScrollPosition.js';
 import { NavMenu } from '../shared/NavMenu.jsx';
+import { scrollToTarget } from '../../utils/smoothScroll.js';
 
 /**
  * Navbar for /gala/* routes.
@@ -9,9 +10,11 @@ import { NavMenu } from '../shared/NavMenu.jsx';
 export function GalaNavbar({ rightSlot }) {
   const isScrolled = useScrollPosition();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogoClick = () => {
-    navigate('/');
+    if (location.pathname === '/') scrollToTarget(0);
+    else navigate('/');
   };
 
   return (
@@ -23,9 +26,10 @@ export function GalaNavbar({ rightSlot }) {
           role="button"
           tabIndex={0}
           onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === ' ') handleLogoClick();
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleLogoClick(); }
           }}
           title="Back to Kelan Tayo home"
+          aria-label="Kelan Tayo home"
         >
           kelan<span>tayo</span>
         </div>

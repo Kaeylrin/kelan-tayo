@@ -1,6 +1,6 @@
-import React, { useMemo, useRef, useState, useEffect } from 'react';
+import { Fragment, useMemo, useRef, useEffect } from 'react';
 import { HOURS, DAY_NAMES, MONTH_NAMES } from '../../constants/config.js';
-import { getDatesArray, formatDateISO } from '../../utils/storage.js';
+import { getDatesArray, formatDateISO, scrollGridToAnchor } from '../../utils/storage.js';
 
 export function MarkScheduleView({
   room,
@@ -13,23 +13,16 @@ export function MarkScheduleView({
   isLocked
 }) {
   const dates = useMemo(() => getDatesArray(room.startDate, room.endDate), [room.startDate, room.endDate]);
-  const [isMouseDown, setIsMouseDown] = useState(false);
-  const [dragMarkMode, setDragMarkMode] = useState(true); // true = mark busy, false = mark free
+  const drag = useRef(null); // { mark: boolean } while dragging
   const scrollRef = useRef(null);
 
   // Auto-scroll to 8:00 AM on initial load
-  useEffect(() => {
-    if (scrollRef.current) {
-      const anchor = scrollRef.current.querySelector('[data-scroll-anchor="true"]');
-      if (anchor) {
-        scrollRef.current.scrollTop = anchor.offsetTop - 30;
-      }
-    }
-  }, []);
+  useEffect(() => { scrollGridToAnchor(scrollRef.current); }, []);
 
   const toggleSlot = (slotKey, markAsBusy) => {
     if (isLocked) return;
     setBusySlots(prev => {
+      if (prev.has(slotKey) === markAsBusy) return prev;
       const next = new Set(prev);
       if (markAsBusy) next.add(slotKey);
       else next.delete(slotKey);
@@ -37,33 +30,29 @@ export function MarkScheduleView({
     });
   };
 
-  const handleCellMouseDown = (slotKey) => {
-    setIsMouseDown(true);
-    const currentlyBusy = busySlots.has(slotKey);
-    const newMode = !currentlyBusy;
-    setDragMarkMode(newMode);
-    toggleSlot(slotKey, newMode);
+  // Pointer events cover mouse, touch and pen with one code path.
+  const handlePointerDown = (e, slotKey) => {
+    if (isLocked || e.button !== 0) return;
+    e.preventDefault();
+    // Let pointerenter fire on the other cells while a finger drags.
+    e.currentTarget.releasePointerCapture?.(e.pointerId);
+    const mark = !busySlots.has(slotKey);
+    drag.current = { mark };
+    toggleSlot(slotKey, mark);
   };
 
-  const handleCellMouseEnter = (slotKey) => {
-    if (!isMouseDown) return;
-    toggleSlot(slotKey, dragMarkMode);
-  };
-
-  // Touch Drag Support for Mobile Viewports
-  const handleTouchMove = (e) => {
-    if (!isMouseDown) return;
-    const touch = e.touches[0];
-    const target = document.elementFromPoint(touch.clientX, touch.clientY);
-    if (target && target.dataset && target.dataset.slot) {
-      toggleSlot(target.dataset.slot, dragMarkMode);
-    }
+  const handlePointerEnter = (slotKey) => {
+    if (drag.current) toggleSlot(slotKey, drag.current.mark);
   };
 
   useEffect(() => {
-    const handleGlobalMouseUp = () => setIsMouseDown(false);
-    window.addEventListener('mouseup', handleGlobalMouseUp);
-    return () => window.removeEventListener('mouseup', handleGlobalMouseUp);
+    const stop = () => { drag.current = null; };
+    window.addEventListener('pointerup', stop);
+    window.addEventListener('pointercancel', stop);
+    return () => {
+      window.removeEventListener('pointerup', stop);
+      window.removeEventListener('pointercancel', stop);
+    };
   }, []);
 
   const handleFormKeyDown = (e) => {
@@ -76,11 +65,11 @@ export function MarkScheduleView({
   const totalBusyHours = busySlots.size;
   const totalGridHours = dates.length * 24;
   const totalFreeHours = Math.max(0, totalGridHours - totalBusyHours);
-  const responseCount = Object.keys(room.participants || {}).length;
-  const shareUrl = `${window.location.origin}${window.location.pathname}?room=${room.code}`;
+  const responseCount = room.participantCount || 0;
+  const shareUrl = `${window.location.origin}/room/${room.code}`;
 
   return (
-    <div className="view-content mark-view-container" onKeyDown={handleFormKeyDown}>
+    <div className="view-content mark-view-container">
       {/* Top Header Card */}
       <div className="mark-header-panel">
         <div className="mark-title-col">
@@ -90,7 +79,7 @@ export function MarkScheduleView({
             <div className="progress-pill">{responseCount} responded</div>
           </div>
           <p className="mark-guide-text">
-            Drag or click on hours when you are <strong style={{ color: 'var(--coral)' }}>busy / occupied</strong>. Unmarked times remain <strong style={{ color: 'var(--gold)' }}>free</strong>.
+            Drag or click on hours when you are <strong className="text-coral">busy / occupied</strong>. Unmarked times remain <strong className="text-gold">free</strong>.
           </p>
         </div>
 
@@ -121,6 +110,7 @@ export function MarkScheduleView({
           <div className="name-input-wrapper">
             <label className="field-sublabel" htmlFor="nameInput">Your Name</label>
             <input
+              onKeyDown={handleFormKeyDown}
               className="field name-input-field"
               id="nameInput"
               placeholder="e.g. Juan Dela Cruz"
@@ -165,7 +155,7 @@ export function MarkScheduleView({
             <span className="stat-pill stat-free">{totalFreeHours}h free</span>
           </div>
           {isLocked ? (
-             <div style={{ color: 'var(--coral)', fontSize: '12px', fontWeight: 'bold' }}>Room is Locked</div>
+            <div className="locked-label">Room is locked</div>
           ) : (
             <button className="btn-save-schedule" onClick={handleSaveSchedule} type="button">
               Save Schedule
@@ -176,16 +166,15 @@ export function MarkScheduleView({
 
       {/* Grid Container */}
       <div className="grid-wrap">
-        <div className="grid-scroll" ref={scrollRef}>
+        <div className="grid-scroll" ref={scrollRef} data-lenis-prevent>
           <div
             className="avail-grid"
             style={{ gridTemplateColumns: `60px repeat(${dates.length}, minmax(80px, 1fr))` }}
-            onTouchMove={handleTouchMove}
           >
             {/* Header row */}
             <div className="grid-corner"></div>
-            {dates.map((d, i) => (
-              <div key={i} className="day-head">
+            {dates.map((d) => (
+              <div key={d.getTime()} className="day-head">
                 {DAY_NAMES[d.getDay()]}
                 <span>{MONTH_NAMES[d.getMonth()]} {d.getDate()}</span>
               </div>
@@ -193,36 +182,22 @@ export function MarkScheduleView({
 
             {/* 24-hour grid rows */}
             {HOURS.map((hLabel, hourIdx) => (
-              <React.Fragment key={hourIdx}>
+              <Fragment key={hourIdx}>
                 <div className="time-label">{hLabel}</div>
-                {dates.map((d, dIdx) => {
+                {dates.map((d) => {
                   const slotKey = `${formatDateISO(d)}_${hourIdx}`;
                   const isBusy = busySlots.has(slotKey);
                   return (
                     <div
-                      key={dIdx}
-                      className={`cell ${isBusy ? 'picked' : ''}`}
-                      data-slot={slotKey}
+                      key={slotKey}
+                      className={`cell ${isBusy ? 'picked' : ''} ${isLocked ? 'cell-locked' : ''}`}
                       data-scroll-anchor={hourIdx === 8 ? 'true' : undefined}
-                      onMouseDown={(e) => {
-                        e.preventDefault();
-                        handleCellMouseDown(slotKey);
-                      }}
-                      onMouseEnter={() => handleCellMouseEnter(slotKey)}
-                      onTouchStart={(e) => {
-                        // Don't e.preventDefault() here because it might block scrolling if we ever revert, 
-                        // but wait, we have touch-action: none on the cell, so it doesn't matter.
-                        // Actually, to prevent simulated mouse down double-toggling:
-                        e.preventDefault();
-                        setIsMouseDown(true);
-                        const newMode = !busySlots.has(slotKey);
-                        setDragMarkMode(newMode);
-                        toggleSlot(slotKey, newMode);
-                      }}
+                      onPointerDown={(e) => handlePointerDown(e, slotKey)}
+                      onPointerEnter={() => handlePointerEnter(slotKey)}
                     />
                   );
                 })}
-              </React.Fragment>
+              </Fragment>
             ))}
           </div>
         </div>
