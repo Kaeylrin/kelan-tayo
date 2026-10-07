@@ -38,6 +38,13 @@ function PageFallback() {
   );
 }
 
+// Lives inside the route Suspense, so it only mounts once the first page's chunk
+// has loaded and rendered; that's when the first-load splash can go.
+function SplashDone() {
+  useEffect(() => { hideSplash(); }, []);
+  return null;
+}
+
 const PAGE_FADE_MS = 160;
 
 // Last scroll position of each history entry, so Back/Forward land where you left off.
@@ -102,6 +109,7 @@ function AnimatedRoutes() {
           <Route path="/terms" element={<TermsPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
+        <SplashDone />
       </Suspense>
     </div>
   );
@@ -109,7 +117,6 @@ function AnimatedRoutes() {
 
 export default function App() {
   useEffect(() => {
-    hideSplash();
     initSmoothScroll();
     if ('scrollRestoration' in window.history) window.history.scrollRestoration = 'manual';
     // Warm up the base-app pages once idle, so navigation feels instant. Regular Gala

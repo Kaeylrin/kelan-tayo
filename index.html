@@ -27,7 +27,9 @@
     />
 
     <!-- First-load splash. Inline so it paints before the app's CSS and JS arrive;
-         src/utils/splash.js fades it out once the app and fonts are ready. -->
+         src/utils/splash.js fades it out as soon as the first page and fonts are ready.
+         The logo only appears if loading actually takes a moment (~300ms); a fast
+         or cached load just clears the backdrop without ever showing it. -->
     <style>
       html { background: #1B3A87; }
       #splash {
@@ -36,19 +38,19 @@
         background-color: #1B3A87;
         background-image: linear-gradient(rgba(246,241,231,.05) 1px, transparent 1px), linear-gradient(90deg, rgba(246,241,231,.05) 1px, transparent 1px);
         background-size: 36px 36px;
-        transition: opacity .5s cubic-bezier(.22,.61,.36,1), visibility .5s;
+        transition: opacity .35s cubic-bezier(.22,.61,.36,1), visibility .35s;
       }
       #splash.is-leaving { opacity: 0; visibility: hidden; }
-      #splash img { width: 150px; height: auto; animation: splash-in .8s cubic-bezier(.22,.61,.36,1) both; }
+      #splash img { width: 150px; height: auto; animation: splash-in .6s cubic-bezier(.22,.61,.36,1) .3s both; }
       #splash .line {
         position: relative; overflow: hidden; width: 60px; height: 3px; border-radius: 3px;
         background: rgba(246,241,231,.16);
-        animation: splash-in .8s cubic-bezier(.22,.61,.36,1) .2s both;
+        animation: splash-in .6s cubic-bezier(.22,.61,.36,1) .4s both;
       }
       #splash .line::after {
         content: ""; position: absolute; inset: 0; background: #FFC64B;
         transform: scaleX(0); transform-origin: 0;
-        animation: splash-draw 1.3s cubic-bezier(.22,.61,.36,1) .3s infinite;
+        animation: splash-draw 1.3s cubic-bezier(.22,.61,.36,1) .5s infinite;
       }
       @keyframes splash-in { from { opacity: 0; transform: translateY(6px); } }
       @keyframes splash-draw {
