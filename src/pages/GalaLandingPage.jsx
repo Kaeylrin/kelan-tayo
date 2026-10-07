@@ -3,8 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { GalaNavbar } from '../components/gala/GalaNavbar.jsx';
 import { Footer } from '../components/shared/Footer.jsx';
 import { sendMagicLink, getSession, isSafeNextPath } from '../services/authService.js';
-
-const EMAIL_RE = /^[^s@]+@[^s@]+.[^s@]+$/;
+import { isValidEmail } from '../utils/validation.js';
 
 export function GalaLandingPage() {
   const navigate = useNavigate();
@@ -26,7 +25,7 @@ export function GalaLandingPage() {
     e.preventDefault();
     if (honeypot) return;
     const trimmed = email.trim().toLowerCase();
-    if (!EMAIL_RE.test(trimmed) || trimmed.length > 254) {
+    if (!isValidEmail(trimmed)) {
       setErrorMsg('Please enter a valid email address.');
       setStatus('error');
       return;

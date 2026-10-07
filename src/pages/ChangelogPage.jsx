@@ -15,6 +15,22 @@ export function ChangelogPage() {
         </div>
 
         <div className="changelog-list">
+          {/* Version 1.5.2 */}
+          <div className="changelog-item">
+            <div className="changelog-meta">
+              <h2>v1.5.2</h2>
+              <span className="changelog-date">October 7, 2026</span>
+            </div>
+            <div className="changelog-content">
+              <div className="changelog-group">
+                <span className="badge fixed">FIXED</span>
+                <ul>
+                  <li>Fixed "Save your spot" rejecting valid email addresses that contain the letter "s".</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
           {/* Version 1.5.1 */}
           <div className="changelog-item">
             <div className="changelog-meta">
